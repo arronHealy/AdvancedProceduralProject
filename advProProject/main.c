@@ -899,7 +899,6 @@ void displayList(struct passengerNode* head)
 	{
 		counter++;
 		printf("\nPassenger %d\n", counter);
-		printf("\nPassport Number: %d\n", temp->passportNum);
 		printf("\nPassenger Name: %s %s\n", temp->firstName, temp->surName);
 		printf("\nPassport Number: %d\n", temp->passportNum);
 		printf("\nPassenger Year of Birth: %d\n", temp->yob);
@@ -961,7 +960,6 @@ void searchPassengerDetails(struct passengerNode* head)
 			if(passportNum == temp->passportNum)
 			{
 				printf("\nPassenger Found at position %d in Database\n", counter);
-				printf("\nPassport Number: %d\n", temp->passportNum);
 				printf("\nPassenger Name: %s %s\n", temp->firstName, temp->surName);
 				printf("\nPassport Number: %d\n", temp->passportNum);
 				printf("\nPassenger Year of Birth: %d\n", temp->yob);
@@ -997,7 +995,6 @@ void searchPassengerDetails(struct passengerNode* head)
 			if (strcmp(firstName, temp->firstName) == 0 && strcmp(surName, temp->surName) == 0)
 			{
 				printf("\nPassenger Found at position %d in Database\n", counter);
-				printf("\nPassport Number: %d\n", temp->passportNum);
 				printf("\nPassenger Name: %s %s\n", temp->firstName, temp->surName);
 				printf("\nPassport Number: %d\n", temp->passportNum);
 				printf("\nPassenger Year of Birth: %d\n", temp->yob);
@@ -1225,7 +1222,6 @@ void updatePassengerStatistic(struct passengerNode* head)
 				}//switch
 
 				printf("\nPassenger Statistics after user update\n");
-				printf("\nPassport Number: %d\n", temp->passportNum);
 				printf("\nPassenger Name: %s %s\n", temp->firstName, temp->surName);
 				printf("\nPassport Number: %d\n", temp->passportNum);
 				printf("\nPassenger Year of Birth: %d\n", temp->yob);
@@ -1552,19 +1548,11 @@ void getTravelClassStats(struct passengerNode* head)
 {
 	struct passengerNode* temp;
 
-	int listCounter = 0;
+	int listCounter = 0, statCounter = 0, classOption;
 
-	int  fromUkCount = 0, fromRestOfEuropeCount = 0, fromAsiaCount = 0;
+	char option, travelClass[20];
 
-	int fromAmericasCount = 0, fromAustralasiaCount = 0;
-
-	int oneDayIrelandCount = 0, lessThreeDayIrelandCount = 0, lessSevenDayIrelandCount = 0, moreSevenDayIrelandCount = 0;
-
-	char option;
-
-	float ukPerCent, roePerCent, asiaPerCent, americaPerCent, australasiaPerCent;
-
-	float oneDayPerCent, lessThreePerCent, lessSevenPerCent, moreSevenPerCent;
+	float perCent;
 
 	temp = head;
 
@@ -1578,6 +1566,42 @@ void getTravelClassStats(struct passengerNode* head)
 	printf("\nNumber of Passengers in Database %d\n", listCounter);
 
 	temp = head;
+
+	do
+	{
+		printf("\nSelect Travel Class to Generate Statistics");
+		printf("\n1. Economy");
+		printf("\n2. Premium Economy");
+		printf("\n3. Business Class");
+		printf("\n4. First Class");
+		printf("\nEnter option: ");
+		scanf("%d", &classOption);
+
+	} while(classOption < 1 || classOption > 4);
+	//do-while
+
+	switch(classOption)
+	{
+	case 1:
+		strcpy(travelClass, "Economy");
+		break;
+
+	case 2:
+		strcpy(travelClass, "Premium Economy");
+		break;
+
+	case 3:
+		strcpy(travelClass, "Business Class");
+		break;
+
+	case 4:
+		strcpy(travelClass, "First Class");
+		break;
+
+	default:
+		printf("\nInvalid option!!! Try Again...\n");
+
+	}//switch
 
 	printf("\nTravel Class Statistic list");
 	printf("\nPlease Enter Character from list below to Generate Statistics");
@@ -1601,18 +1625,18 @@ void getTravelClassStats(struct passengerNode* head)
 
 		while (temp != NULL)
 		{
-			if (strcmp(temp->travelFrom, "UK") == 0)
+			if (strcmp(temp->travelFrom, "UK") == 0 && strcmp(temp->travelClass, travelClass) == 0)
 			{
-				fromUkCount++;
+				statCounter++;
 			}//if
 
 			temp = temp->next;
 
 		}//while
 
-		ukPerCent = ((float)fromUkCount / listCounter) * 100;
+		perCent = ((float)statCounter / listCounter) * 100;
 
-		printf("\n%% of Passengers in Database who travel from the UK is %.2f\n", ukPerCent);
+		printf("\n%% of Passengers in Database who travel from the UK & in Travel class %s is %.2f %%\n", travelClass, perCent);
 
 		break;
 
@@ -1621,18 +1645,18 @@ void getTravelClassStats(struct passengerNode* head)
 
 		while (temp != NULL)
 		{
-			if (strcmp(temp->travelFrom, "Rest of Europe") == 0)
+			if (strcmp(temp->travelFrom, "Rest of Europe") == 0 && strcmp(temp->travelClass, travelClass) == 0)
 			{
-				fromRestOfEuropeCount++;
+				statCounter++;
 			}//if
 
 			temp = temp->next;
 
 		}//while
 
-		roePerCent = ((float)fromRestOfEuropeCount / listCounter) * 100;
+		perCent = ((float)statCounter / listCounter) * 100;
 
-		printf("\n%% of Passengers in Database who travel from the Rest of Europe is %.2f %\n", roePerCent);
+		printf("\n%% of Passengers in Database who travel from the Rest of Europe & in Travel class %s is %.2f %%\n", travelClass, perCent);
 
 		break;
 
@@ -1641,18 +1665,18 @@ void getTravelClassStats(struct passengerNode* head)
 
 		while (temp != NULL)
 		{
-			if (strcmp(temp->travelFrom, "Asia") == 0)
+			if (strcmp(temp->travelFrom, "Asia") == 0 && strcmp(temp->travelClass, travelClass) == 0)
 			{
-				fromAsiaCount++;
+				statCounter++;
 			}//if
 
 			temp = temp->next;
 
 		}//while
 
-		asiaPerCent = ((float)fromAsiaCount / listCounter) * 100;
+		perCent = ((float)statCounter / listCounter) * 100;
 
-		printf("\n%% of Passengers in Database who travel from Asia is %.2f %%\n", asiaPerCent);
+		printf("\n%% of Passengers in Database who travel from Asia & in Travel class %s is %.2f %%\n", travelClass, perCent);
 
 		break;
 
@@ -1661,18 +1685,18 @@ void getTravelClassStats(struct passengerNode* head)
 
 		while (temp != NULL)
 		{
-			if (strcmp(temp->travelFrom, "Americas") == 0)
+			if (strcmp(temp->travelFrom, "Americas") == 0 && strcmp(temp->travelClass, travelClass) == 0)
 			{
-				fromAmericasCount++;
+				statCounter++;
 			}//if
 
 			temp = temp->next;
 
 		}//while
 
-		americaPerCent = ((float)fromAmericasCount / listCounter) * 100;
+		perCent = ((float)statCounter / listCounter) * 100;
 
-		printf("\n%% of Passengers in Database who travel from the Americas is %.2f %\n", americaPerCent);
+		printf("\n%% of Passengers in Database who travel from the Americas & in Travel class %s is %.2f %%\n", travelClass, perCent);
 
 		break;
 
@@ -1681,18 +1705,18 @@ void getTravelClassStats(struct passengerNode* head)
 
 		while (temp != NULL)
 		{
-			if (strcmp(temp->travelFrom, "Australasia") == 0)
+			if (strcmp(temp->travelFrom, "Australasia") == 0 && strcmp(temp->travelClass, travelClass) == 0)
 			{
-				fromAustralasiaCount++;
+				statCounter++;
 			}//if
 
 			temp = temp->next;
 
 		}//while
 
-		australasiaPerCent = ((float)fromAustralasiaCount / listCounter) * 100;
+		perCent = ((float)statCounter / listCounter) * 100;
 
-		printf("\n%% of Passengers in Database who travel from the Australasia is %.2f %%\n", australasiaPerCent);
+		printf("\n%% of Passengers in Database who travel from the Australasia & in Travel class %s is %.2f %%\n", travelClass, perCent);
 
 		break;
 
@@ -1701,18 +1725,18 @@ void getTravelClassStats(struct passengerNode* head)
 
 		while (temp != NULL)
 		{
-			if (strcmp(temp->averageDuration, "One Day") == 0)
+			if (strcmp(temp->averageDuration, "One Day") == 0 && strcmp(temp->travelClass, travelClass) == 0)
 			{
-				oneDayIrelandCount++;
+				statCounter++;
 			}//if
 
 			temp = temp->next;
 
 		}//while
 
-		oneDayPerCent = ((float)oneDayIrelandCount / listCounter) * 100;
+		perCent = ((float)statCounter / listCounter) * 100;
 
-		printf("\n%% of Passengers in Database who spent on Average one day in Ireland is %.2f %%\n", oneDayPerCent);
+		printf("\n%% of Passengers in Database who spent on Average one day in Ireland & in Travel class %s is %.2f %%\n", travelClass, perCent);
 
 		break;
 
@@ -1721,18 +1745,18 @@ void getTravelClassStats(struct passengerNode* head)
 
 		while (temp != NULL)
 		{
-			if (strcmp(temp->averageDuration, "Less than 3 Days") == 0)
+			if (strcmp(temp->averageDuration, "Less than 3 Days") == 0 && strcmp(temp->travelClass, travelClass) == 0)
 			{
-				lessThreeDayIrelandCount++;
+				statCounter++;
 			}//if
 
 			temp = temp->next;
 
 		}//while
 
-		lessThreePerCent = ((float)lessThreeDayIrelandCount / listCounter) * 100;
+		perCent = ((float)statCounter / listCounter) * 100;
 
-		printf("\n%% of Passengers in Database who spent on Average less than 3 days in Ireland is %.2f %%\n", lessThreePerCent);
+		printf("\n%% of Passengers in Database who spent on Average less than 3 days in Ireland & in Travel class %s is %.2f %%\n", travelClass, perCent);
 
 		break;
 
@@ -1741,18 +1765,18 @@ void getTravelClassStats(struct passengerNode* head)
 
 		while (temp != NULL)
 		{
-			if (strcmp(temp->averageDuration, "Less than 7 Days") == 0)
+			if (strcmp(temp->averageDuration, "Less than 7 Days") == 0 && strcmp(temp->travelClass, travelClass) == 0)
 			{
-				lessSevenDayIrelandCount++;
+				statCounter++;
 			}//if
 
 			temp = temp->next;
 
 		}//while
 
-		lessSevenPerCent = ((float)lessSevenDayIrelandCount / listCounter) * 100;
+		perCent = ((float)statCounter / listCounter) * 100;
 
-		printf("\n%% of Passengers in Database who spent on Average less than 7 days in Ireland is %.2f %%\n", lessSevenPerCent);
+		printf("\n%% of Passengers in Database who spent on Average less than 7 days in Ireland & in Travel class %s & in Travel Class %s is %.2f %%\n", travelClass, perCent);
 
 		break;
 
@@ -1761,18 +1785,18 @@ void getTravelClassStats(struct passengerNode* head)
 
 		while (temp != NULL)
 		{
-			if (strcmp(temp->averageDuration, "More than 7 Days") == 0)
+			if (strcmp(temp->averageDuration, "More than 7 Days") == 0 && strcmp(temp->travelClass, travelClass) == 0)
 			{
-				moreSevenDayIrelandCount++;
+				statCounter++;
 			}//if
 
 			temp = temp->next;
 
 		}//while
 
-		moreSevenPerCent = ((float)moreSevenDayIrelandCount / listCounter) * 100;
+		perCent = ((float)statCounter / listCounter) * 100;
 
-		printf("\n%% of Passengers in Database who spent on Average more than 7 days in Ireland is %.2f %%\n", moreSevenPerCent);
+		printf("\n%% of Passengers in Database who spent on Average more than 7 days in Ireland & in Travel class %s is %.2f %%\n", travelClass, perCent);
 
 		break;
 
@@ -1785,19 +1809,9 @@ void getTravelClassStats(struct passengerNode* head)
 
 void get1980TravelStats(struct passengerNode* head)
 {
-	int listCounter = 0;
+	int listCounter = 0, statCounter = 0;
 
-	int  fromUkCount = 0, fromRestOfEuropeCount = 0, fromAsiaCount = 0;
-
-	int fromAmericasCount = 0, fromAustralasiaCount = 0;
-
-	int oneDayIrelandCount = 0, lessThreeDayIrelandCount = 0, lessSevenDayIrelandCount = 0, moreSevenDayIrelandCount = 0;
-
-	int countryCount = 0, irelandCount = 0;
-
-	float ukPerCent, roePerCent, asiaPerCent, americaPerCent, australasiaPerCent;
-
-	float oneDayPerCent, lessThreePerCent, lessSevenPerCent, moreSevenPerCent;
+	float perCent;
 
 	char option;
 
@@ -1840,16 +1854,16 @@ void get1980TravelStats(struct passengerNode* head)
 		{
 			if (strcmp(temp->travelFrom, "UK") == 0 && temp->yob < 1980)
 			{
-				fromUkCount++;
+				statCounter++;
 			}//if
 
 			temp = temp->next;
 
 		}//while
 
-		ukPerCent = ((float)fromUkCount / listCounter) * 100;
+		perCent = ((float)statCounter / listCounter) * 100;
 
-		printf("\n%% of Passengers in Database who travel from the UK & are Born before 1980 is %.2f %%\n", ukPerCent);
+		printf("\n%% of Passengers in Database who travel from the UK & are Born before 1980 is %.2f %%\n", perCent);
 		
 		break;
 
@@ -1860,16 +1874,16 @@ void get1980TravelStats(struct passengerNode* head)
 		{
 			if (strcmp(temp->travelFrom, "Rest of Europe") == 0 && temp->yob < 1980)
 			{
-				fromRestOfEuropeCount++;
+				statCounter++;
 			}//if
 
 			temp = temp->next;
 
 		}//while
 
-		roePerCent = ((float)fromRestOfEuropeCount / listCounter) * 100;
+		perCent = ((float)statCounter / listCounter) * 100;
 
-		printf("\n%% of Passengers in Database who travel from the Rest of Europe & are Born before 1980 is %.2f %%\n", roePerCent);
+		printf("\n%% of Passengers in Database who travel from the Rest of Europe & are Born before 1980 is %.2f %%\n", perCent);
 
 		break;
 
@@ -1880,16 +1894,16 @@ void get1980TravelStats(struct passengerNode* head)
 		{
 			if (strcmp(temp->travelFrom, "Asia") == 0 && temp->yob < 1980)
 			{
-				fromAsiaCount++;
+				statCounter++;
 			}//if
 
 			temp = temp->next;
 
 		}//while
 
-		asiaPerCent = ((float)fromAsiaCount / listCounter) * 100;
+		perCent = ((float)statCounter / listCounter) * 100;
 
-		printf("\n%% of Passengers in Database who travel from Asia & are Born before 1980 is %.2f %%\n", asiaPerCent);
+		printf("\n%% of Passengers in Database who travel from Asia & are Born before 1980 is %.2f %%\n", perCent);
 
 		break;
 
@@ -1900,16 +1914,16 @@ void get1980TravelStats(struct passengerNode* head)
 		{
 			if (strcmp(temp->travelFrom, "Americas") == 0 && temp->yob < 1980)
 			{
-				fromAmericasCount++;
+				statCounter++;
 			}//if
 
 			temp = temp->next;
 
 		}//while
 
-		americaPerCent = ((float)fromAmericasCount / listCounter) * 100;
+		perCent = ((float)statCounter / listCounter) * 100;
 
-		printf("\n%% of Passengers in Database who travel from the Americas & are Born before 1980 is %.2f %%\n", americaPerCent);
+		printf("\n%% of Passengers in Database who travel from the Americas & are Born before 1980 is %.2f %%\n", perCent);
 
 		break;
 
@@ -1920,16 +1934,16 @@ void get1980TravelStats(struct passengerNode* head)
 		{
 			if (strcmp(temp->travelFrom, "Australasia") == 0 && temp->yob < 1980)
 			{
-				fromAustralasiaCount++;
+				statCounter++;
 			}//if
 
 			temp = temp->next;
 
 		}//while
 
-		australasiaPerCent = ((float)fromAustralasiaCount / listCounter) * 100;
+		perCent = ((float)statCounter / listCounter) * 100;
 
-		printf("\n%% of Passengers in Database who travel from the Australasia & are Born before 1980 is %.2f %%\n", australasiaPerCent);
+		printf("\n%% of Passengers in Database who travel from the Australasia & are Born before 1980 is %.2f %%\n", perCent);
 
 		break;
 
@@ -1940,16 +1954,16 @@ void get1980TravelStats(struct passengerNode* head)
 		{
 			if (strcmp(temp->averageDuration, "One Day") == 0 && temp->yob < 1980)
 			{
-				oneDayIrelandCount++;
+				statCounter++;
 			}//if
 
 			temp = temp->next;
 
 		}//while
 
-		oneDayPerCent = ((float)oneDayIrelandCount / listCounter) * 100;
+		perCent = ((float)statCounter / listCounter) * 100;
 
-		printf("\n%% of Passengers in Database who spent on Average one day in Ireland & are Born before 1980 is %.2f %%\n", oneDayPerCent);
+		printf("\n%% of Passengers in Database who spent on Average one day in Ireland & are Born before 1980 is %.2f %%\n", perCent);
 
 		break;
 
@@ -1960,16 +1974,16 @@ void get1980TravelStats(struct passengerNode* head)
 		{
 			if (strcmp(temp->averageDuration, "Less than 3 Days") == 0 && temp->yob < 1980)
 			{
-				lessThreeDayIrelandCount++;
+				statCounter++;
 			}//if
 
 			temp = temp->next;
 
 		}//while
 
-		lessThreePerCent = ((float)lessThreeDayIrelandCount / listCounter) * 100;
+		perCent = ((float)statCounter / listCounter) * 100;
 
-		printf("\n%% of Passengers in Database who spent on Average less than 3 days in Ireland & are Born before 1980 is %.2f %%\n", lessThreePerCent);
+		printf("\n%% of Passengers in Database who spent on Average less than 3 days in Ireland & are Born before 1980 is %.2f %%\n", perCent);
 
 		break;
 
@@ -1980,16 +1994,16 @@ void get1980TravelStats(struct passengerNode* head)
 		{
 			if (strcmp(temp->averageDuration, "Less than 7 Days") == 0 && temp->yob < 1980)
 			{
-				lessSevenDayIrelandCount++;
+				statCounter++;
 			}//if
 
 			temp = temp->next;
 
 		}//while
 
-		lessSevenPerCent = ((float)lessSevenDayIrelandCount / listCounter) * 100;
+		perCent = ((float)statCounter / listCounter) * 100;
 
-		printf("\n%% of Passengers in Database who spent on Average less than 7 days in Ireland & are Born before 1980 is %.2f %%\n", lessSevenPerCent);
+		printf("\n%% of Passengers in Database who spent on Average less than 7 days in Ireland & are Born before 1980 is %.2f %%\n", perCent);
 
 		break;
 
@@ -2000,16 +2014,16 @@ void get1980TravelStats(struct passengerNode* head)
 		{
 			if (strcmp(temp->averageDuration, "More than 7 Days") == 0 && temp->yob < 1980)
 			{
-				moreSevenDayIrelandCount++;
+				statCounter++;
 			}//if
 
 			temp = temp->next;
 
 		}//while
 
-		moreSevenPerCent = ((float)moreSevenDayIrelandCount / listCounter) * 100;
+		perCent = ((float)statCounter / listCounter) * 100;
 
-		printf("\n%% of Passengers in Database who spent on Average more than 7 days in Ireland & are Born before 1980 is %.2f %%\n", moreSevenPerCent);
+		printf("\n%% of Passengers in Database who spent on Average more than 7 days in Ireland & are Born before 1980 is %.2f %%\n", perCent);
 
 		break;
 
@@ -2040,7 +2054,6 @@ void printPassengerFile(FILE** database, struct passengerNode* head)
 		{
 			counter++;
 			fprintf(database, "\nPassenger %d\n", counter);
-			fprintf(database, "\nPassport Number: %d\n", temp->passportNum);
 			fprintf(database, "\nPassenger Name: %s %s\n", temp->firstName, temp->surName);
 			fprintf(database, "\nPassport Number: %d\n", temp->passportNum);
 			fprintf(database, "\nPassenger Year of Birth: %d\n", temp->yob);

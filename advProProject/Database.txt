@@ -1,13 +1,13 @@
 
 Passenger 1
 
-Passport Number: 1111
+Passport Number: 2222
 
-Passenger Name: qqqq aaaa
+Passenger Name: wwww ssss
 
-Passport Number: 1111
+Passport Number: 2222
 
-Passenger Year of Birth: 1990
+Passenger Year of Birth: 1960
 
 Passenger E-mail: xxxx
 
@@ -18,4 +18,46 @@ Passenger Travel Class: 1 - Economy
 Trips to Ireland per year: 1 - Less than three times per year
 
 Passenger Average duration of stay: 1 - One day
+
+
+Passenger 2
+
+Passport Number: 3333
+
+Passenger Name: eeee dddd
+
+Passport Number: 3333
+
+Passenger Year of Birth: 1970
+
+Passenger E-mail: cccc
+
+Passenger Area Travelled from: 1 - UK
+
+Passenger Travel Class: 1 - Economy
+
+Trips to Ireland per year: 1 - Less than three times per year
+
+Passenger Average duration of stay: 1 - One day
+
+
+Passenger 3
+
+Passport Number: 5555
+
+Passenger Name: tttt gggg
+
+Passport Number: 5555
+
+Passenger Year of Birth: 1990
+
+Passenger E-mail: bbbb
+
+Passenger Area Travelled from: 2 - Rest of Europe
+
+Passenger Travel Class: 2 - Premium Economy
+
+Trips to Ireland per year: 2 - Less than five times per year
+
+Passenger Average duration of stay: 2 - Less than 3 days
 
