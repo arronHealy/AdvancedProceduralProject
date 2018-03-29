@@ -39,7 +39,7 @@ void addPassengerToStart(struct passengerNode** head);
 void addPassengerToEnd(struct passengerNode* head);
 void addPassengerAtPos(struct passengerNode* head, int pos);
 void searchPassengerDetails(struct passengerNode* head);
-void displayList(struct passengerNode* head);
+void displayList(struct passengerNode* head, int size);
 int listLength(struct passengerNode* head);
 int userLogin(FILE** logIn, struct login* user);
 void updatePassengerStatistic(struct passengerNode* head);
@@ -49,11 +49,11 @@ void deletePassengerAtPos(struct passengerNode* head, int pos);
 void generatePassengerStats(struct passengerNode* head);
 void get1980TravelStats(struct passengerNode* head);
 void getTravelClassStats(struct passengerNode* head);
-
-void printPassengerFile(FILE** database, struct passengerNode* head);
+void updatePassengerByName(struct passengerNode* head, char first[20], char last[20]);
+void updatePassengerByNumber(struct passengerNode* head, int passport);
+void printPassengerFile(FILE** database, struct passengerNode* head, int size);
 
 void listUkByBirthYear(struct passengerNode* head, int size);
-
 
 void main()
 {
@@ -61,7 +61,7 @@ void main()
 	FILE* outFile;
 	struct passengerNode* head = NULL;
 	struct login* user;
-	int choice, pos, validate, counter = 0;
+	int choice, pos, validate;
 
 	user = (struct login*)malloc(sizeof(struct login));
 
@@ -97,19 +97,19 @@ void main()
 				if (pos < 2)
 				{
 					printf("\nAdding to start of Database\n");
-					counter++;
+					
 					addPassengerToStart(&head);
 				}
 				else if (pos > listLength(head))
 				{
 					printf("\nAdd to End of Database\n");
-					counter++;
+					
 					addPassengerToEnd(head);
 				}
 				else
 				{
 					printf("\nAdd at position %d\n", pos);
-					counter++;
+				
 					addPassengerAtPos(head, pos);
 				}
 
@@ -124,7 +124,7 @@ void main()
 				else
 				{
 					printf("Display all Passengers in Databases Details\n");
-					displayList(head);
+					displayList(head, listLength(head));
 				}//if
 				
 				break;
@@ -172,19 +172,19 @@ void main()
 					if (pos < 2)
 					{
 						printf("\nDeleting at start of Database\n");
-						counter--;
+						
 						deletePassengerAtStart(&head);
 					}
 					else if (pos >= 2 && pos < listLength(head))
 					{
 						printf("\nDelete at position %d in Database\n", pos);
-						counter--;
+					
 						deletePassengerAtPos(head, pos);
 					}
 					else
 					{
 						printf("\nDelete at end of Database\n");
-						counter--;
+					
 						deletePassengerAtEnd(head);
 					}//if
 
@@ -215,7 +215,7 @@ void main()
 				else
 				{
 					printf("\nPrint Database to Report File\n");
-					printPassengerFile(&outFile, head);
+					printPassengerFile(&outFile, head, listLength(head));
 				}//if
 				
 				break;
@@ -229,7 +229,7 @@ void main()
 				else
 				{
 					printf("\nPrint UK Passengers in order of Birth year\n");
-					listUkByBirthYear(head, counter);
+					listUkByBirthYear(head, listLength(head));
 				}//if
 				
 				break;
@@ -273,7 +273,7 @@ void main()
 	else
 	{
 		printf("\nPrinting Updated Database to Report File\n");
-		printPassengerFile(&outFile, head);
+		printPassengerFile(&outFile, head, listLength(head));
 		printf("\nContents written to File!!! Check Folder...\n");
 	}//if
 
@@ -375,8 +375,11 @@ int userLogin(FILE** logIn, struct login* user)
 int searchPassportNum(struct passengerNode* head, int passport)
 {
 	struct passengerNode* temp;
+	struct passengerNode* prev;
 
 	temp = head;
+
+	char option;
 
 	while(temp != NULL)
 	{
@@ -384,11 +387,34 @@ int searchPassportNum(struct passengerNode* head, int passport)
 		{
 			printf("\nPassport Number already exists in Database!!! Passport Number must be Unique...");
 			printf("\nPlease Try Again...\n");
-			return 0;
-		}
-		
+			printf("\nWould you like to Update Passenger Id - %d Statistics?", passport);
+			printf("\nEnter (y/Y) Yes or (n/N) No\n");
+			printf("Enter option: ");
+			scanf(" %c", &option);
 
+			switch(option)
+			{
+			case 'y':
+			case 'Y':
+				printf("\nUpdate Passenger Id - %d", passport);
+				updatePassengerByNumber(head, passport);
+				return 0;
+				break;
+
+			case 'n':
+			case 'N':
+				return 0;
+				break;
+
+			default:
+				printf("\nInvalid option entered!!! Enter valid option next time...\n");
+				return 0;
+			}//switch
+
+		}//if
+		
 		temp = temp->next;
+
 	}//while
 
 	return passport;
@@ -398,26 +424,44 @@ int searchPassportNum(struct passengerNode* head, int passport)
 char *checkEmailAddress(char *email)
 {
 
-	char atSymbol = '@', dotCom[10] = ".com";
+	char atSymbol = '@', dotSymbol = '.', dotCom[10] = ".com";
 
-	int size = strlen(email);
+	char temp[30];
 
-	int foundAt = 0;
+	int size, foundAt = 0, atCounter = 0, dotCounter = 0;
 
-	printf("\nString length %d\n", size);
+	size = strlen(email);
+
+	strcpy(temp, email);
+
+	printf("\nString length %d\ntemp string is %s\n", size, temp);
 
 	for(int i = 0; i < size; i++)
 	{
-		if (strchr((email + i), atSymbol))
+		if(temp[i] == atSymbol)
 		{
-			foundAt++;
+			atCounter++;
+		}//if
+
+		if(temp[i] == dotSymbol)
+		{
+			dotCounter++;
 		}//if
 
 	}//for
 
+	printf("\nAt counter = %d\ndot counter %d\n", atCounter, dotCounter);
+
+	
+	if(strchr(email, atSymbol) && strstr(email, dotCom))
+	{
+		foundAt = 1;
+	}//if
+
+
 	printf("\nFound at = %d\n", foundAt);
 
-	if(foundAt == 1 && strstr(email, dotCom))
+	if(foundAt == 1 && atCounter == 1 && dotCounter == 1)
 	{
 		printf("\n%s Accepted", email);
 		printf("\nEmail format valid continue with Passenger Detail Submission\n");
@@ -441,8 +485,6 @@ void addPassengerToStart(struct passengerNode** head)
 	newPassenger = (struct passengerNode*)malloc(sizeof(struct passengerNode));
 
 	char *tempEmail;
-
-	char address[30];
 
 	tempEmail = (char*)malloc(30 * sizeof(char));
 
@@ -477,8 +519,7 @@ void addPassengerToStart(struct passengerNode** head)
 
 			printf("\n%s email before method\n", tempEmail);
 
-			tempEmail = checkEmailAddress(tempEmail);
-		} while(tempEmail == NULL);
+		} while(checkEmailAddress(tempEmail) == NULL);
 		
 		
 
@@ -490,7 +531,8 @@ void addPassengerToStart(struct passengerNode** head)
 		else
 		{
 			strcpy(newPassenger->email, tempEmail);
-			printf("\n%s Address after method\n", newPassenger->email);
+			printf("\n%s Address after Validation\n", newPassenger->email);
+			free(tempEmail);
 		}//if
 
 		do
@@ -708,9 +750,8 @@ void addPassengerToEnd(struct passengerNode* head)
 
 			printf("\n%s email before method\n", tempEmail);
 
-			tempEmail = checkEmailAddress(tempEmail);
-		} while (tempEmail == NULL);
-
+		} while (checkEmailAddress(tempEmail) == NULL);
+		//do-while
 
 
 		if (tempEmail == NULL)
@@ -722,6 +763,7 @@ void addPassengerToEnd(struct passengerNode* head)
 		{
 			strcpy(newPassenger->email, tempEmail);
 			printf("\n%s Address after method\n", newPassenger->email);
+			free(tempEmail);
 		}//if
 
 		do
@@ -898,6 +940,7 @@ void addPassengerToEnd(struct passengerNode* head)
 		curr->next = newPassenger;
 
 		newPassenger->next = NULL;
+
 	}
 	else
 	{
@@ -944,8 +987,7 @@ void addPassengerAtPos(struct passengerNode* head, int pos)
 
 			printf("\n%s email before method\n", tempEmail);
 
-			tempEmail = checkEmailAddress(tempEmail);
-		} while (tempEmail == NULL);
+		} while (checkEmailAddress(tempEmail) == NULL);
 
 
 
@@ -958,6 +1000,7 @@ void addPassengerAtPos(struct passengerNode* head, int pos)
 		{
 			strcpy(newPassenger->email, tempEmail);
 			printf("\n%s Address after method\n", newPassenger->email);
+			free(tempEmail);
 		}//if
 
 
@@ -1134,6 +1177,7 @@ void addPassengerAtPos(struct passengerNode* head, int pos)
 
 		newPassenger->next = temp->next;
 		temp->next = newPassenger;
+
 	}
 	else
 	{
@@ -1143,29 +1187,67 @@ void addPassengerAtPos(struct passengerNode* head, int pos)
 
 }//addAtPos
 
-void displayList(struct passengerNode* head)
+void displayList(struct passengerNode* head, int size)
 {
 	struct passengerNode* temp;
 	
-	int counter = 0;
+	int counter = 0, tempInt, *ptr;
 
 	temp = head;
 
-	while(temp != NULL)
-	{
-		counter++;
-		printf("\nPassenger %d\n", counter);
-		printf("\nPassenger Name: %s %s\n", temp->firstName, temp->surName);
-		printf("\nPassport Number: %d\n", temp->passportNum);
-		printf("\nPassenger Year of Birth: %d\n", temp->yob);
-		printf("\nPassenger E-mail: %s\n", temp->email);
-		printf("\nPassenger Area Travelled from: %d - %s\n", temp->travelFromNum, temp->travelFrom);
-		printf("\nPassenger Travel Class: %d - %s\n", temp->travelClassNum, temp->travelClass);
-		printf("\nTrips to Ireland per year: %d - %s\n", temp->tripsToIrelandNum, temp->tripsToIreland);
-		printf("\nPassenger Average duration of stay: %d - %s\n\n", temp->averageDurationNum, temp->averageDuration);
-		temp = temp->next;
+	ptr = (int*)malloc(size * sizeof(int));
 
+	while (temp != NULL)
+	{
+		*(ptr + counter) = temp->passportNum;
+		counter++;
+		temp = temp->next;
 	}//while
+
+	for (int i = 0; i < size; i++)
+	{
+		for (int j = i + 1; j < size; j++)
+		{
+			if (*(ptr + i) > *(ptr + j))
+			{
+				tempInt = *(ptr + i);
+				*(ptr + i) = *(ptr + j);
+				*(ptr + j) = tempInt;
+			}//if
+		}
+
+	}//for
+
+	temp = head;
+
+	counter = 0;
+
+	for (int i = 0; i < size; i++)
+	{
+		while (temp != NULL)
+		{
+			if (*(ptr + i) == temp->passportNum)
+			{
+				counter++;
+				printf("\nPassenger %d\n", counter);
+				printf("\nPassenger Name: %s %s\n", temp->firstName, temp->surName);
+				printf("\nPassport Number: %d\n", temp->passportNum);
+				printf("\nPassenger Year of Birth: %d\n", temp->yob);
+				printf("\nPassenger E-mail: %s\n", temp->email);
+				printf("\nPassenger Area Travelled from: %d - %s\n", temp->travelFromNum, temp->travelFrom);
+				printf("\nPassenger Travel Class: %d - %s\n", temp->travelClassNum, temp->travelClass);
+				printf("\nTrips to Ireland per year: %d - %s\n", temp->tripsToIrelandNum, temp->tripsToIreland);
+				printf("\nPassenger Average duration of stay: %d - %s\n\n", temp->averageDurationNum, temp->averageDuration);
+				//temp = temp->next;
+			}//if
+
+			temp = temp->next;
+
+		}//while
+
+		temp = head;
+
+	}//for
 
 }//displayList
 
@@ -1280,6 +1362,418 @@ void searchPassengerDetails(struct passengerNode* head)
 
 }//searchPassengerDetails
 
+void updatePassengerByNumber(struct passengerNode* head, int passport)
+{
+	struct passengerNode* temp;
+
+	int travelClass, travelArea, tripsIreland, duration, counter = 1;
+
+	temp = head;
+
+	while (temp != NULL)
+	{
+		if (passport == temp->passportNum)
+		{
+			printf("\nPassenger passport number Found at position %d in Database\n", counter);
+
+			do
+			{
+				printf("\nPlease enter Area Traveled from: ");
+				printf("\n1. UK");
+				printf("\n2. Rest of Europe");
+				printf("\n3. Asia");
+				printf("\n4. Americas");
+				printf("\n5. Australasia");
+				printf("\nEnter Area Travelled: ");
+				scanf("%d", &travelArea);
+
+			} while (travelArea < 1 || travelArea > 5);
+			//do-while
+
+			switch (travelArea)
+			{
+			case 1:
+				temp->travelFromNum = travelArea;
+				strcpy(temp->travelFrom, "UK");
+				break;
+
+			case 2:
+				temp->travelFromNum = travelArea;
+				strcpy(temp->travelFrom, "Rest of Europe");
+				break;
+
+			case 3:
+				temp->travelFromNum = travelArea;
+				strcpy(temp->travelFrom, "Asia");
+				break;
+
+			case 4:
+				temp->travelFromNum = travelArea;
+				strcpy(temp->travelFrom, "Americas");
+				break;
+
+			case 5:
+				temp->travelFromNum = travelArea;
+				strcpy(temp->travelFrom, "Australasia");
+				break;
+
+			default:
+				printf("\nInvalid option!!! Try Again...\n");
+
+			}//switch
+
+
+			do
+			{
+				printf("\nPlease enter Travel Class to Ireland: ");
+				printf("\n1. Economy");
+				printf("\n2. Premium Economy");
+				printf("\n3. Business Class");
+				printf("\n4. First Class");
+				printf("\nEnter Travel Class: ");
+				scanf("%d", &travelClass);
+
+			} while (travelClass < 1 || travelClass > 4);
+			//do-while
+
+
+			switch (travelClass)
+			{
+			case 1:
+				temp->travelClassNum = travelClass;
+				strcpy(temp->travelClass, "Economy");
+				break;
+
+			case 2:
+				temp->travelClassNum = travelClass;
+				strcpy(temp->travelClass, "Premium Economy");
+				break;
+
+			case 3:
+				temp->travelClassNum = travelClass;
+				strcpy(temp->travelClass, "Business Class");
+				break;
+
+			case 4:
+				temp->travelClassNum = travelClass;
+				strcpy(temp->travelClass, "First Class");
+				break;
+
+			default:
+				printf("\nInvalid option!!! Try Again...\n");
+
+			}//switch
+
+			do
+			{
+				printf("\nPlease enter number of Trips to Ireland per year: ");
+				printf("\n1. Less than three times per year");
+				printf("\n2. Less than five times per year");
+				printf("\n3. More than five times per year");
+				printf("\nEnter option: ");
+				scanf("%d", &tripsIreland);
+
+			} while (tripsIreland < 1 || tripsIreland > 3);
+			//do-while
+
+
+			switch (tripsIreland)
+			{
+			case 1:
+				temp->tripsToIrelandNum = tripsIreland;
+				strcpy(temp->tripsToIreland, "Less than three times per year");
+				break;
+
+			case 2:
+				temp->tripsToIrelandNum = tripsIreland;
+				strcpy(temp->tripsToIreland, "Less than five times per year");
+				break;
+
+			case 3:
+				temp->tripsToIrelandNum = tripsIreland;
+				strcpy(temp->tripsToIreland, "More than five times per year");
+				break;
+
+			default:
+				printf("\nInvalid option!!! Try Again...\n");
+
+			}//switch
+
+			do
+			{
+				printf("\nPlease enter Average Duration of Stay: ");
+				printf("\n1. One day");
+				printf("\n2. Less than 3 days");
+				printf("\n3. Less than 7 days");
+				printf("\n4. More than 7 days");
+				printf("\nEnter Travel Class: ");
+				scanf("%d", &duration);
+
+			} while (duration < 1 || duration > 4);
+			//do-while
+
+
+			switch (duration)
+			{
+			case 1:
+				temp->averageDurationNum = duration;
+				strcpy(temp->averageDuration, "One day");
+				break;
+
+			case 2:
+				temp->averageDurationNum = duration;
+				strcpy(temp->averageDuration, "Less than 3 days");
+				break;
+
+			case 3:
+				temp->averageDurationNum = duration;
+				strcpy(temp->averageDuration, "Less than 7 days");
+				break;
+
+			case 4:
+				temp->averageDurationNum = duration;
+				strcpy(temp->averageDuration, "More than 7 days");
+				break;
+
+			default:
+				printf("\nInvalid option!!! Try Again...\n");
+
+			}//switch
+
+			printf("\nPassenger Statistics after user update\n");
+			printf("\nPassenger Name: %s %s\n", temp->firstName, temp->surName);
+			printf("\nPassport Number: %d\n", temp->passportNum);
+			printf("\nPassenger Year of Birth: %d\n", temp->yob);
+			printf("\nPassenger E-mail: %s\n", temp->email);
+			printf("\nPassenger Area Travelled from: %d - %s\n", temp->travelFromNum, temp->travelFrom);
+			printf("\nPassenger Travel Class: %d - %s\n", temp->travelClassNum, temp->travelClass);
+			printf("\nTrips to Ireland per year: %d - %s\n", temp->tripsToIrelandNum, temp->tripsToIreland);
+			printf("\nPassenger Average duration of stay: %d - %s\n\n", temp->averageDurationNum, temp->averageDuration);
+
+			return;
+
+		}
+		else
+		{
+			counter++;
+			temp = temp->next;
+		}//if
+
+	}//while
+
+	printf("\nPassport number %d not found in Database!!! Please try again...\n", passport);
+
+
+}//updateByPassportNumber
+
+void updatePassengerByName(struct passengerNode* head, char first[20], char last[20])
+{
+	struct passengerNode* temp;
+
+	int passportNum, option, counter = 1;
+
+	int travelArea, travelClass, tripsIreland, duration;
+
+	//char firstName[20], surName[20];
+
+	temp = head;
+
+	while (temp != NULL)
+	{
+		if (strcmp(first, temp->firstName) == 0 && strcmp(last, temp->surName) == 0)
+		{
+			printf("\n%s %s Found in Database!!!\n", first, last);
+
+			do
+			{
+				printf("\nPlease enter Area Traveled from: ");
+				printf("\n1. UK");
+				printf("\n2. Rest of Europe");
+				printf("\n3. Asia");
+				printf("\n4. Americas");
+				printf("\n5. Australasia");
+				printf("\nEnter Area Travelled: ");
+				scanf("%d", &travelArea);
+
+			} while (travelArea < 1 || travelArea > 5);
+			//do-while
+
+			switch (travelArea)
+			{
+			case 1:
+				temp->travelFromNum = travelArea;
+				strcpy(temp->travelFrom, "UK");
+				break;
+
+			case 2:
+				temp->travelFromNum = travelArea;
+				strcpy(temp->travelFrom, "Rest of Europe");
+				break;
+
+			case 3:
+				temp->travelFromNum = travelArea;
+				strcpy(temp->travelFrom, "Asia");
+				break;
+
+			case 4:
+				temp->travelFromNum = travelArea;
+				strcpy(temp->travelFrom, "Americas");
+				break;
+
+			case 5:
+				temp->travelFromNum = travelArea;
+				strcpy(temp->travelFrom, "Australasia");
+				break;
+
+			default:
+				printf("\nInvalid option!!! Try Again...\n");
+
+			}//switch
+
+
+			do
+			{
+				printf("\nPlease enter Travel Class to Ireland: ");
+				printf("\n1. Economy");
+				printf("\n2. Premium Economy");
+				printf("\n3. Business Class");
+				printf("\n4. First Class");
+				printf("\nEnter Travel Class: ");
+				scanf("%d", &travelClass);
+
+			} while (travelClass < 1 || travelClass > 4);
+			//do-while
+
+
+			switch (travelClass)
+			{
+			case 1:
+				temp->travelClassNum = travelClass;
+				strcpy(temp->travelClass, "Economy");
+				break;
+
+			case 2:
+				temp->travelClassNum = travelClass;
+				strcpy(temp->travelClass, "Premium Economy");
+				break;
+
+			case 3:
+				temp->travelClassNum = travelClass;
+				strcpy(temp->travelClass, "Business Class");
+				break;
+
+			case 4:
+				temp->travelClassNum = travelClass;
+				strcpy(temp->travelClass, "First Class");
+				break;
+
+			default:
+				printf("\nInvalid option!!! Try Again...\n");
+
+			}//switch
+
+			do
+			{
+				printf("\nPlease enter number of Trips to Ireland per year: ");
+				printf("\n1. Less than three times per year");
+				printf("\n2. Less than five times per year");
+				printf("\n3. More than five times per year");
+				printf("\nEnter option: ");
+				scanf("%d", &tripsIreland);
+
+			} while (tripsIreland < 1 || tripsIreland > 3);
+			//do-while
+
+
+			switch (tripsIreland)
+			{
+			case 1:
+				temp->tripsToIrelandNum = tripsIreland;
+				strcpy(temp->tripsToIreland, "Less than three times per year");
+				break;
+
+			case 2:
+				temp->tripsToIrelandNum = tripsIreland;
+				strcpy(temp->tripsToIreland, "Less than five times per year");
+				break;
+
+			case 3:
+				temp->tripsToIrelandNum = tripsIreland;
+				strcpy(temp->tripsToIreland, "More than five times per year");
+				break;
+
+			default:
+				printf("\nInvalid option!!! Try Again...\n");
+
+			}//switch
+
+			do
+			{
+				printf("\nPlease enter Average Duration of Stay: ");
+				printf("\n1. One day");
+				printf("\n2. Less than 3 days");
+				printf("\n3. Less than 7 days");
+				printf("\n4. More than 7 days");
+				printf("\nEnter Travel Class: ");
+				scanf("%d", &duration);
+
+			} while (duration < 1 || duration > 4);
+			//do-while
+
+
+			switch (duration)
+			{
+			case 1:
+				temp->averageDurationNum = duration;
+				strcpy(temp->averageDuration, "One Day");
+				break;
+
+			case 2:
+				temp->averageDurationNum = duration;
+				strcpy(temp->averageDuration, "Less than 3 Days");
+				break;
+
+			case 3:
+				temp->averageDurationNum = duration;
+				strcpy(temp->averageDuration, "Less than 7 Days");
+				break;
+
+			case 4:
+				temp->averageDurationNum = duration;
+				strcpy(temp->averageDuration, "More than 7 Days");
+				break;
+
+			default:
+				printf("\nInvalid option!!! Try Again...\n");
+
+			}//switch
+
+			printf("\nPassenger Statistics after user update\n");
+			printf("\nPassenger at position %d in List", counter);
+			printf("\nPassport Number: %d\n", temp->passportNum);
+			printf("\nPassenger Name: %s %s\n", temp->firstName, temp->surName);
+			printf("\nPassenger Year of Birth: %d\n", temp->yob);
+			printf("\nPassenger E-mail: %s\n", temp->email);
+			printf("\nPassenger Area Travelled from: %d - %s\n", temp->travelFromNum, temp->travelFrom);
+			printf("\nPassenger Travel Class: %d - %s\n", temp->travelClassNum, temp->travelClass);
+			printf("\nTrips to Ireland per year: %d - %s\n", temp->tripsToIrelandNum, temp->tripsToIreland);
+			printf("\nPassenger Average duration of stay: %d - %s\n\n", temp->averageDurationNum, temp->averageDuration);
+
+			return;
+		}
+		else
+		{
+			counter++;
+			temp = temp->next;
+		}//if
+
+	}//while
+
+	printf("\nPassenger name %s %s not found in Database!!! Please try again...\n", first, last);
+
+
+}//updateByName
+
 void updatePassengerStatistic(struct passengerNode* head)
 {
 	struct passengerNode* temp;
@@ -1307,401 +1801,18 @@ void updatePassengerStatistic(struct passengerNode* head)
 		printf("\nPlease enter Passport number to search: ");
 		scanf("%d", &passportNum);
 
-		while (temp != NULL)
-		{
-			if (passportNum == temp->passportNum)
-			{
-				printf("\nPassenger passport number Found at position %d in Database\n", counter);
-
-				do
-				{
-					printf("\nPlease enter Area Traveled from: ");
-					printf("\n1. UK");
-					printf("\n2. Rest of Europe");
-					printf("\n3. Asia");
-					printf("\n4. Americas");
-					printf("\n5. Australasia");
-					printf("\nEnter Area Travelled: ");
-					scanf("%d", &travelArea);
-
-				} while (travelArea < 1 || travelArea > 5);
-				//do-while
-
-				switch (travelArea)
-				{
-				case 1:
-					temp->travelFromNum = travelArea;
-					strcpy(temp->travelFrom, "UK");
-					break;
-
-				case 2:
-					temp->travelFromNum = travelArea;
-					strcpy(temp->travelFrom, "Rest of Europe");
-					break;
-
-				case 3:
-					temp->travelFromNum = travelArea;
-					strcpy(temp->travelFrom, "Asia");
-					break;
-
-				case 4:
-					temp->travelFromNum = travelArea;
-					strcpy(temp->travelFrom, "Americas");
-					break;
-
-				case 5:
-					temp->travelFromNum = travelArea;
-					strcpy(temp->travelFrom, "Australasia");
-					break;
-
-				default:
-					printf("\nInvalid option!!! Try Again...\n");
-
-				}//switch
-
-
-				do
-				{
-					printf("\nPlease enter Travel Class to Ireland: ");
-					printf("\n1. Economy");
-					printf("\n2. Premium Economy");
-					printf("\n3. Business Class");
-					printf("\n4. First Class");
-					printf("\nEnter Travel Class: ");
-					scanf("%d", &travelClass);
-
-				} while (travelClass < 1 || travelClass > 4);
-				//do-while
-
-
-				switch (travelClass)
-				{
-				case 1:
-					temp->travelClassNum = travelClass;
-					strcpy(temp->travelClass, "Economy");
-					break;
-
-				case 2:
-					temp->travelClassNum = travelClass;
-					strcpy(temp->travelClass, "Premium Economy");
-					break;
-
-				case 3:
-					temp->travelClassNum = travelClass;
-					strcpy(temp->travelClass, "Business Class");
-					break;
-
-				case 4:
-					temp->travelClassNum = travelClass;
-					strcpy(temp->travelClass, "First Class");
-					break;
-
-				default:
-					printf("\nInvalid option!!! Try Again...\n");
-
-				}//switch
-
-				do
-				{
-					printf("\nPlease enter number of Trips to Ireland per year: ");
-					printf("\n1. Less than three times per year");
-					printf("\n2. Less than five times per year");
-					printf("\n3. More than five times per year");
-					printf("\nEnter option: ");
-					scanf("%d", &tripsIreland);
-
-				} while (tripsIreland < 1 || tripsIreland > 3);
-				//do-while
-
-
-				switch (tripsIreland)
-				{
-				case 1:
-					temp->tripsToIrelandNum = tripsIreland;
-					strcpy(temp->tripsToIreland, "Less than three times per year");
-					break;
-
-				case 2:
-					temp->tripsToIrelandNum = tripsIreland;
-					strcpy(temp->tripsToIreland, "Less than five times per year");
-					break;
-
-				case 3:
-					temp->tripsToIrelandNum = tripsIreland;
-					strcpy(temp->tripsToIreland, "More than five times per year");
-					break;
-
-				default:
-					printf("\nInvalid option!!! Try Again...\n");
-
-				}//switch
-
-				do
-				{
-					printf("\nPlease enter Average Duration of Stay: ");
-					printf("\n1. One day");
-					printf("\n2. Less than 3 days");
-					printf("\n3. Less than 7 days");
-					printf("\n4. More than 7 days");
-					printf("\nEnter Travel Class: ");
-					scanf("%d", &duration);
-
-				} while (duration < 1 || duration > 4);
-				//do-while
-
-
-				switch (duration)
-				{
-				case 1:
-					temp->averageDurationNum = duration;
-					strcpy(temp->averageDuration, "One day");
-					break;
-
-				case 2:
-					temp->averageDurationNum = duration;
-					strcpy(temp->averageDuration, "Less than 3 days");
-					break;
-
-				case 3:
-					temp->averageDurationNum = duration;
-					strcpy(temp->averageDuration, "Less than 7 days");
-					break;
-
-				case 4:
-					temp->averageDurationNum = duration;
-					strcpy(temp->averageDuration, "More than 7 days");
-					break;
-
-				default:
-					printf("\nInvalid option!!! Try Again...\n");
-
-				}//switch
-
-				printf("\nPassenger Statistics after user update\n");
-				printf("\nPassenger Name: %s %s\n", temp->firstName, temp->surName);
-				printf("\nPassport Number: %d\n", temp->passportNum);
-				printf("\nPassenger Year of Birth: %d\n", temp->yob);
-				printf("\nPassenger E-mail: %s\n", temp->email);
-				printf("\nPassenger Area Travelled from: %d - %s\n", temp->travelFromNum, temp->travelFrom);
-				printf("\nPassenger Travel Class: %d - %s\n", temp->travelClassNum, temp->travelClass);
-				printf("\nTrips to Ireland per year: %d - %s\n", temp->tripsToIrelandNum, temp->tripsToIreland);
-				printf("\nPassenger Average duration of stay: %d - %s\n\n", temp->averageDurationNum, temp->averageDuration);
-
-				return;
-
-			}
-			else
-			{
-				counter++;
-				temp = temp->next;
-			}//if
-
-		}//while
-
-		printf("\nPassport number %d not found in Database!!! Please try again...\n", passportNum);
-
+		updatePassengerByNumber(head, passportNum);
 		break;
 
 	case 2:
-
 		printf("\nPlease enter Passenger firstname to search: ");
 		scanf("%s", firstName);
 
 		printf("\nPlease enter Passenger lastname to search: ");
 		scanf("%s", surName);
 
-		while (temp != NULL)
-		{
-			if (strcmp(firstName, temp->firstName) == 0 && strcmp(surName, temp->surName) == 0)
-			{
-				printf("\n%s %s Found in Database!!!\n", firstName, surName);
-
-				do
-				{
-					printf("\nPlease enter Area Traveled from: ");
-					printf("\n1. UK");
-					printf("\n2. Rest of Europe");
-					printf("\n3. Asia");
-					printf("\n4. Americas");
-					printf("\n5. Australasia");
-					printf("\nEnter Area Travelled: ");
-					scanf("%d", &travelArea);
-
-				} while (travelArea < 1 || travelArea > 5);
-				//do-while
-
-				switch (travelArea)
-				{
-				case 1:
-					temp->travelFromNum = travelArea;
-					strcpy(temp->travelFrom, "UK");
-					break;
-
-				case 2:
-					temp->travelFromNum = travelArea;
-					strcpy(temp->travelFrom, "Rest of Europe");
-					break;
-
-				case 3:
-					temp->travelFromNum = travelArea;
-					strcpy(temp->travelFrom, "Asia");
-					break;
-
-				case 4:
-					temp->travelFromNum = travelArea;
-					strcpy(temp->travelFrom, "Americas");
-					break;
-
-				case 5:
-					temp->travelFromNum = travelArea;
-					strcpy(temp->travelFrom, "Australasia");
-					break;
-
-				default:
-					printf("\nInvalid option!!! Try Again...\n");
-
-				}//switch
-
-
-				do
-				{
-					printf("\nPlease enter Travel Class to Ireland: ");
-					printf("\n1. Economy");
-					printf("\n2. Premium Economy");
-					printf("\n3. Business Class");
-					printf("\n4. First Class");
-					printf("\nEnter Travel Class: ");
-					scanf("%d", &travelClass);
-
-				} while (travelClass < 1 || travelClass > 4);
-				//do-while
-
-
-				switch (travelClass)
-				{
-				case 1:
-					temp->travelClassNum = travelClass;
-					strcpy(temp->travelClass, "Economy");
-					break;
-
-				case 2:
-					temp->travelClassNum = travelClass;
-					strcpy(temp->travelClass, "Premium Economy");
-					break;
-
-				case 3:
-					temp->travelClassNum = travelClass;
-					strcpy(temp->travelClass, "Business Class");
-					break;
-
-				case 4:
-					temp->travelClassNum = travelClass;
-					strcpy(temp->travelClass, "First Class");
-					break;
-
-				default:
-					printf("\nInvalid option!!! Try Again...\n");
-
-				}//switch
-
-				do
-				{
-					printf("\nPlease enter number of Trips to Ireland per year: ");
-					printf("\n1. Less than three times per year");
-					printf("\n2. Less than five times per year");
-					printf("\n3. More than five times per year");
-					printf("\nEnter option: ");
-					scanf("%d", &tripsIreland);
-
-				} while (tripsIreland < 1 || tripsIreland > 3);
-				//do-while
-
-
-				switch (tripsIreland)
-				{
-				case 1:
-					temp->tripsToIrelandNum = tripsIreland;
-					strcpy(temp->tripsToIreland, "Less than three times per year");
-					break;
-
-				case 2:
-					temp->tripsToIrelandNum = tripsIreland;
-					strcpy(temp->tripsToIreland, "Less than five times per year");
-					break;
-
-				case 3:
-					temp->tripsToIrelandNum = tripsIreland;
-					strcpy(temp->tripsToIreland, "More than five times per year");
-					break;
-
-				default:
-					printf("\nInvalid option!!! Try Again...\n");
-
-				}//switch
-
-				do
-				{
-					printf("\nPlease enter Average Duration of Stay: ");
-					printf("\n1. One day");
-					printf("\n2. Less than 3 days");
-					printf("\n3. Less than 7 days");
-					printf("\n4. More than 7 days");
-					printf("\nEnter Travel Class: ");
-					scanf("%d", &duration);
-
-				} while (duration < 1 || duration > 4);
-				//do-while
-
-
-				switch (duration)
-				{
-				case 1:
-					temp->averageDurationNum = duration;
-					strcpy(temp->averageDuration, "One Day");
-					break;
-
-				case 2:
-					temp->averageDurationNum = duration;
-					strcpy(temp->averageDuration, "Less than 3 Days");
-					break;
-
-				case 3:
-					temp->averageDurationNum = duration;
-					strcpy(temp->averageDuration, "Less than 7 Days");
-					break;
-
-				case 4:
-					temp->averageDurationNum = duration;
-					strcpy(temp->averageDuration, "More than 7 Days");
-					break;
-
-				default:
-					printf("\nInvalid option!!! Try Again...\n");
-
-				}//switch
-
-				printf("\nPassenger Statistics after user update\n");
-				printf("\nPassport Number: %d\n", temp->passportNum);
-				printf("\nPassenger Name: %s %s\n", temp->firstName, temp->surName);
-				printf("\nPassport Number: %d\n", temp->passportNum);
-				printf("\nPassenger Year of Birth: %d\n", temp->yob);
-				printf("\nPassenger E-mail: %s\n", temp->email);
-				printf("\nPassenger Area Travelled from: %d - %s\n", temp->travelFromNum, temp->travelFrom);
-				printf("\nPassenger Travel Class: %d - %s\n", temp->travelClassNum, temp->travelClass);
-				printf("\nTrips to Ireland per year: %d - %s\n", temp->tripsToIrelandNum, temp->tripsToIreland);
-				printf("\nPassenger Average duration of stay: %d - %s\n\n", temp->averageDurationNum, temp->averageDuration);
-
-				return;
-			}
-			else
-			{
-				temp = temp->next;
-			}//if
-
-		}//while
-
-		printf("\nPassenger name %s %s not found in Database!!! Please try again...\n", firstName, surName);
-
+		updatePassengerByName(head, firstName, surName);
+		
 		break;
 
 	default:
@@ -2290,13 +2401,15 @@ void get1980TravelStats(struct passengerNode* head)
 
 }//get1980TravelStats
 
-void printPassengerFile(FILE** database, struct passengerNode* head)
+void printPassengerFile(FILE** database, struct passengerNode* head, int size)
 {
 	database = fopen("Database.txt", "w");
 
 	struct passengerNode* temp;
 
-	int counter = 0;
+	int counter = 0, tempInt, *ptr;
+
+	ptr = (int*)malloc(size * sizeof(int));
 
 	temp = head;
 
@@ -2306,21 +2419,57 @@ void printPassengerFile(FILE** database, struct passengerNode* head)
 	}
 	else
 	{
-		while (temp != NULL)
+		while(temp != NULL)
 		{
+			*(ptr + counter) = temp->passportNum;
 			counter++;
-			fprintf(database, "\nPassenger %d\n", counter);
-			fprintf(database, "\nPassenger Name: %s %s\n", temp->firstName, temp->surName);
-			fprintf(database, "\nPassport Number: %d\n", temp->passportNum);
-			fprintf(database, "\nPassenger Year of Birth: %d\n", temp->yob);
-			fprintf(database, "\nPassenger E-mail: %s\n", temp->email);
-			fprintf(database, "\nPassenger Area Travelled from: %d - %s\n", temp->travelFromNum, temp->travelFrom);
-			fprintf(database, "\nPassenger Travel Class: %d - %s\n", temp->travelClassNum, temp->travelClass);
-			fprintf(database, "\nTrips to Ireland per year: %d - %s\n", temp->tripsToIrelandNum, temp->tripsToIreland);
-			fprintf(database, "\nPassenger Average duration of stay: %d - %s\n\n", temp->averageDurationNum, temp->averageDuration);
 			temp = temp->next;
-
 		}//while
+
+		for (int i = 0; i < size; i++)
+		{
+			for (int j = i + 1; j < size; j++)
+			{
+				if (*(ptr + i) > *(ptr + j))
+				{
+					tempInt = *(ptr + i);
+					*(ptr + i) = *(ptr + j);
+					*(ptr + j) = tempInt;
+				}//if
+			}
+
+		}//for
+
+		temp = head;
+
+		counter = 0;
+
+		for(int i = 0; i < size; i++)
+		{
+			while (temp != NULL)
+			{
+				if(*(ptr + i) == temp->passportNum)
+				{
+					counter++;
+					fprintf(database, "\nPassenger %d\n", counter);
+					fprintf(database, "\nPassenger Name: %s %s\n", temp->firstName, temp->surName);
+					fprintf(database, "\nPassport Number: %d\n", temp->passportNum);
+					fprintf(database, "\nPassenger Year of Birth: %d\n", temp->yob);
+					fprintf(database, "\nPassenger E-mail: %s\n", temp->email);
+					fprintf(database, "\nPassenger Area Travelled from: %d - %s\n", temp->travelFromNum, temp->travelFrom);
+					fprintf(database, "\nPassenger Travel Class: %d - %s\n", temp->travelClassNum, temp->travelClass);
+					fprintf(database, "\nTrips to Ireland per year: %d - %s\n", temp->tripsToIrelandNum, temp->tripsToIreland);
+					fprintf(database, "\nPassenger Average duration of stay: %d - %s\n\n", temp->averageDurationNum, temp->averageDuration);
+					//temp = temp->next;
+				}//if
+
+				temp = temp->next;
+
+			}//while
+
+			temp = head;
+
+		}//for
 
 		fclose(database);
 
@@ -2397,5 +2546,9 @@ void listUkByBirthYear(struct passengerNode* head, int size)
 
 	}//for
 
+	free(ptr);
+
 	
 }//listUkByBirthYear
+
+
