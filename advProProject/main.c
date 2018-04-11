@@ -33,6 +33,7 @@ struct login
 	char password[20];
 };
 
+struct passengerNode loadFile(FILE** loadFile, struct passengerNode** head);
 int searchPassportNum(struct passengerNode* head, int passport);
 char *checkEmailAddress(char *email);
 void addPassengerToStart(struct passengerNode** head);
@@ -51,21 +52,44 @@ void get1980TravelStats(struct passengerNode* head);
 void getTravelClassStats(struct passengerNode* head);
 void updatePassengerByName(struct passengerNode* head, char first[20], char last[20]);
 void updatePassengerByNumber(struct passengerNode* head, int passport);
-void printPassengerFile(FILE** database, struct passengerNode* head, int size);
+void printPassengerFile(FILE** database, FILE** details, struct passengerNode* head, int size);
 
 void listUkByBirthYear(struct passengerNode* head, int size);
 
 void main()
 {
 	FILE* logInFile;
+	FILE* passengerFile;
 	FILE* outFile;
 	struct passengerNode* head = NULL;
 	struct login* user;
-	int choice, pos, validate;
+	int choice, pos, validate, option;
 
 	user = (struct login*)malloc(sizeof(struct login));
 
-	validate = userLogin(&logInFile, user);
+	do
+	{
+		printf("\nWelcome to XYZ Passport Database");
+		printf("\nEnter option to Load Database or Create New Database");
+		printf("\n1. Load Passenger Details From File");
+		printf("\n2. Enter New Passenger Details");
+		printf("\nEnter option: ");
+		scanf("%d", &option);
+
+	} while (option < 1 || option > 2);
+
+	switch(option)
+	{
+	case 1:
+		validate = userLogin(&logInFile, user);
+		head = loadFile(&passengerFile);
+		break;
+
+	case 2:
+		validate = userLogin(&logInFile, user);
+		break;
+
+	}//switch
 
 	if (validate == 1)
 	{
@@ -215,7 +239,7 @@ void main()
 				else
 				{
 					printf("\nPrint Database to Report File\n");
-					printPassengerFile(&outFile, head, listLength(head));
+					printPassengerFile(&outFile, &loadFile, head, listLength(head));
 				}//if
 				
 				break;
@@ -273,7 +297,7 @@ void main()
 	else
 	{
 		printf("\nPrinting Updated Database to Report File\n");
-		printPassengerFile(&outFile, head, listLength(head));
+		printPassengerFile(&outFile, &loadFile, head, listLength(head));
 		printf("\nContents written to File!!! Check Folder...\n");
 	}//if
 
@@ -282,6 +306,183 @@ void main()
 
 
 //method list
+
+
+struct passengerNode loadFile(FILE** loadFile)
+{
+	loadFile = fopen("passengerDetails.txt", "r");
+
+	//struct passengerNode* temp = *head;
+
+	struct passengerNode* newPassenger;
+
+	int counter = 0;
+
+	newPassenger = (struct passengerNode*)malloc(sizeof(struct passengerNode));
+
+	if(loadFile == NULL)
+	{
+		printf("\nFile could not be opened Try Again!!!\n");
+		return;
+	}
+	else
+	{
+		printf("\nFile opened!!!\n");
+
+		while(!feof(loadFile))
+		{
+
+			fscanf(loadFile, "%d", &newPassenger->passportNum);
+			fscanf(loadFile, "%20s", newPassenger->firstName);
+			fscanf(loadFile, "%20s", newPassenger->surName);
+			fscanf(loadFile, "%d", &newPassenger->yob);
+			fscanf(loadFile, "%20s", newPassenger->email);
+			fscanf(loadFile, "%d", &newPassenger->travelFromNum);
+			
+			switch(newPassenger->travelFromNum)
+			{
+			case 1:
+				strcpy(newPassenger->travelFrom, "UK");
+				break;
+
+			case 2:
+				strcpy(newPassenger->travelFrom, "Rest of Europe");
+				break;
+
+			case 3:
+				strcpy(newPassenger->travelFrom, "Asia");
+				break;
+
+			case 4:
+				strcpy(newPassenger->travelFrom, "Americas");
+				break;
+
+			case 5:
+				strcpy(newPassenger->travelFrom, "Australasia");
+				break;
+
+			}//switch
+
+			fscanf(loadFile, "%d", &newPassenger->travelClassNum);
+			
+			switch (newPassenger->travelClassNum)
+			{
+			case 1:
+				strcpy(newPassenger->travelClass, "Economy");
+				break;
+
+			case 2:
+				strcpy(newPassenger->travelClass, "Premium Economy");
+				break;
+
+			case 3:
+				strcpy(newPassenger->travelClass, "Business Class");
+				break;
+
+			case 4:
+				strcpy(newPassenger->travelFrom, "First Class");
+				break;
+
+			}//switch
+
+			fscanf(loadFile, "%d", &newPassenger->tripsToIrelandNum);
+			
+			switch (newPassenger->tripsToIrelandNum)
+			{
+			case 1:
+				strcpy(newPassenger->tripsToIreland, "Less than three times per year");
+				break;
+
+			case 2:
+				strcpy(newPassenger->tripsToIreland, "Less than three times per year");
+				break;
+
+			case 3:
+				strcpy(newPassenger->tripsToIreland, "More than five times per year");
+				break;
+
+			}//switch
+
+			fscanf(loadFile, "%d", &newPassenger->averageDurationNum);
+			
+			switch (newPassenger->averageDurationNum)
+			{
+			case 1:
+				strcpy(newPassenger->averageDuration, "One day");
+				break;
+
+			case 2:
+				strcpy(newPassenger->averageDuration, "Less than 3 days");
+				break;
+
+			case 3:
+				strcpy(newPassenger->averageDuration, "Less than 7 days");
+				break;
+
+			case 4:
+				strcpy(newPassenger->averageDuration, "More than 7 days");
+				break;
+
+			}//switch
+			
+			fflush(stdin);
+
+			if(temp == NULL)
+			{
+
+				//newPassenger->next = *head;
+
+				*head = newPassenger;
+				//*head = temp;
+				
+			}
+			else
+			{
+				while (temp->next != NULL)
+				{
+					temp = temp->next;
+				}//while
+
+				temp->next = newPassenger;
+
+				newPassenger->next = NULL;
+			}//if
+
+			counter++;
+
+			printf("\nPassenger Name: %s %s\n", newPassenger->firstName, newPassenger->surName);
+			printf("\nPassport Number: %d\n", newPassenger->passportNum);
+			printf("\nPassenger Year of Birth: %d\n", newPassenger->yob);
+			printf("\nPassenger E-mail: %s\n", newPassenger->email);
+			printf("\nPassenger Area Travelled from: %d - %s\n", newPassenger->travelFromNum, newPassenger->travelFrom);
+			printf("\nPassenger Travel Class: %d - %s\n", newPassenger->travelClassNum, newPassenger->travelClass);
+			printf("\nTrips to Ireland per year: %d - %s\n", newPassenger->tripsToIrelandNum, newPassenger->tripsToIreland);
+			printf("\nPassenger Average duration of stay: %d - %s\n\n", newPassenger->averageDurationNum, newPassenger->averageDuration);
+
+			if(!feof(loadFile))
+			{
+				struct passengerNode* newPassenger = (struct passengerNode*)malloc(sizeof(struct passengerNode));
+				
+			}//if
+
+			//struct passengerNode* newPassenger = (struct passengerNode*)malloc(sizeof(struct passengerNode));
+			
+
+		}//while
+
+		newPassenger->next = NULL;
+		//free(tempHead);
+		
+		printf("\nFile read into linked list\n");
+
+		fclose(loadFile);
+
+	}//if
+
+	return;
+
+}//loadFile
+
 
 int userLogin(FILE** logIn, struct login* user)
 {
@@ -2401,9 +2602,11 @@ void get1980TravelStats(struct passengerNode* head)
 
 }//get1980TravelStats
 
-void printPassengerFile(FILE** database, struct passengerNode* head, int size)
+void printPassengerFile(FILE** database, FILE** details, struct passengerNode* head, int size)
 {
 	database = fopen("Database.txt", "w");
+
+	details = fopen("PassengerDetails.txt", "w");
 
 	struct passengerNode* temp;
 
@@ -2413,7 +2616,7 @@ void printPassengerFile(FILE** database, struct passengerNode* head, int size)
 
 	temp = head;
 
-	if(database == NULL)
+	if(database == NULL && details == NULL)
 	{
 		printf("\nFile could not be opened!!! Try again...\n");
 	}
@@ -2460,6 +2663,8 @@ void printPassengerFile(FILE** database, struct passengerNode* head, int size)
 					fprintf(database, "\nPassenger Travel Class: %d - %s\n", temp->travelClassNum, temp->travelClass);
 					fprintf(database, "\nTrips to Ireland per year: %d - %s\n", temp->tripsToIrelandNum, temp->tripsToIreland);
 					fprintf(database, "\nPassenger Average duration of stay: %d - %s\n\n", temp->averageDurationNum, temp->averageDuration);
+
+					fprintf(details, "%d %s %s %d %s %d %d %d %d\n", temp->passportNum, temp->firstName, temp->surName, temp->yob, temp->email, temp->travelFromNum, temp->travelClassNum, temp->tripsToIrelandNum, temp->averageDurationNum);
 					//temp = temp->next;
 				}//if
 
@@ -2472,6 +2677,8 @@ void printPassengerFile(FILE** database, struct passengerNode* head, int size)
 		}//for
 
 		fclose(database);
+
+		fclose(details);
 
 		printf("\nDatabase written to Report File!!! Check Folder...\n");
 

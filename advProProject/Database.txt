@@ -3,47 +3,9 @@ Passenger 1
 
 Passenger Name: qqq aaa
 
-Passport Number: 1111
-
-Passenger Year of Birth: 1977
-
-Passenger E-mail: me@mail.com
-
-Passenger Area Travelled from: 2 - Rest of Europe
-
-Passenger Travel Class: 2 - Premium Economy
-
-Trips to Ireland per year: 2 - Less than five times per year
-
-Passenger Average duration of stay: 2 - Less than 3 days
-
-
-Passenger 2
-
-Passenger Name: wwww ssss
-
-Passport Number: 2222
+Passport Number: 111
 
 Passenger Year of Birth: 1999
-
-Passenger E-mail: mail@mail.com
-
-Passenger Area Travelled from: 1 - UK
-
-Passenger Travel Class: 1 - Economy
-
-Trips to Ireland per year: 1 - Less than three times per year
-
-Passenger Average duration of stay: 1 - One day
-
-
-Passenger 3
-
-Passenger Name: ttt ggg
-
-Passport Number: 5555
-
-Passenger Year of Birth: 1950
 
 Passenger E-mail: name@mail.com
 
@@ -56,21 +18,59 @@ Trips to Ireland per year: 1 - Less than three times per year
 Passenger Average duration of stay: 1 - One day
 
 
+Passenger 2
+
+Passenger Name: www sss
+
+Passport Number: 222
+
+Passenger Year of Birth: 1988
+
+Passenger E-mail: tim@mail.com
+
+Passenger Area Travelled from: 2 - Rest of Europe
+
+Passenger Travel Class: 2 - Premium Economy
+
+Trips to Ireland per year: 2 - Less than five times per year
+
+Passenger Average duration of stay: 2 - Less than 3 days
+
+
+Passenger 3
+
+Passenger Name: eee ddd
+
+Passport Number: 333
+
+Passenger Year of Birth: 1977
+
+Passenger E-mail: jon@mail.com
+
+Passenger Area Travelled from: 3 - Asia
+
+Passenger Travel Class: 3 - Business Class
+
+Trips to Ireland per year: 3 - More than five times per year
+
+Passenger Average duration of stay: 3 - Less than 7 days
+
+
 Passenger 4
 
-Passenger Name: yyyy hhhh
+Passenger Name: rrr fff
 
-Passport Number: 6666
+Passport Number: 444
 
-Passenger Year of Birth: 1970
+Passenger Year of Birth: 1966
 
-Passenger E-mail: mail@mail.com
+Passenger E-mail: mac@mail.com
 
-Passenger Area Travelled from: 1 - UK
+Passenger Area Travelled from: 5 - Australasia
 
-Passenger Travel Class: 1 - Economy
+Passenger Travel Class: 4 - First Class
 
-Trips to Ireland per year: 1 - Less than three times per year
+Trips to Ireland per year: 3 - More than five times per year
 
-Passenger Average duration of stay: 1 - One day
+Passenger Average duration of stay: 4 - More than 7 days
 
