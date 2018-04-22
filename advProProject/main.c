@@ -3,11 +3,14 @@
 #include <string.h>
 #include <conio.h>
 
+// Arron Healy - Advanced Procedural Project
+//defined values for password entry to print * char
 #define ENTER 13
 #define BKSP 8
 #define TAB 9
 #define SPACE 32
 
+//passenger node to store passenger details for linked list
 struct passengerNode
 {
 	int passportNum;
@@ -27,46 +30,75 @@ struct passengerNode
 	struct passengerNode* next;
 };
 
+//user login structure for validation
 struct login
 {
 	char username[20];
 	char password[20];
 };
 
+//function declarations for linked list processing
 struct passengerNode* loadFile(FILE** loadFile, struct passengerNode* head);
+
 int searchPassportNum(struct passengerNode* head, int passport);
+
 char *checkEmailAddress(char *email);
+
 void addPassengerToStart(struct passengerNode** head);
+
 void addPassengerToEnd(struct passengerNode* head);
+
 void addPassengerAtPos(struct passengerNode* head, int pos);
+
 void searchPassengerDetails(struct passengerNode* head);
+
 void displayList(struct passengerNode* head, int size);
+
 int listLength(struct passengerNode* head);
+
 int userLogin(FILE** logIn, struct login* user);
+
 void updatePassengerStatistic(struct passengerNode* head);
+
 void deletePassengerAtStart(struct passengerNode** head);
+
 void deletePassengerAtEnd(struct passengerNode* head);
+
 void deletePassengerAtPos(struct passengerNode* head, int pos);
+
 void generatePassengerStats(struct passengerNode* head);
+
 void get1980TravelStats(struct passengerNode* head);
+
 void getTravelClassStats(struct passengerNode* head);
+
 void updatePassengerByName(struct passengerNode* head, char first[20], char last[20]);
+
 void updatePassengerByNumber(struct passengerNode* head, int passport);
+
 void printPassengerFile(FILE** database, FILE** details, struct passengerNode* head, int size);
 
 void listUkByBirthYear(struct passengerNode* head, int size);
 
+//start main
 void main()
 {
 	FILE* logInFile;
 	FILE* passengerFile;
 	FILE* outFile;
+	//files for login, read, write database
+
+	//head of list and user structures
 	struct passengerNode* head = NULL;
 	struct login* user;
+	
+	//ints for validation, option choices and position of linked list
 	int choice, pos, validate, option;
 
+	//allocate memory for user
 	user = (struct login*)malloc(sizeof(struct login));
 
+	//do-while loop to ensure right option entered
 	do
 	{
 		printf("\nWelcome to XYZ Passport Database");
@@ -78,30 +110,36 @@ void main()
 
 	} while (option < 1 || option > 2);
 
+	//switch case option for load file or enter new list
 	switch(option)
 	{
 	case 1:
-
+		//login
 		validate = userLogin(&logInFile, user);
 
+		//break if login failed
 		if(validate != 1)
 		{
 			printf("\nInvalid Login\n");
 			break;
 		}
 
+		//assign head to load file function to return list has bug to fix but works
 		head = loadFile(&passengerFile, head);
 		break;
 
 	case 2:
+		//login
 		validate = userLogin(&logInFile, user);
 		
 		break;
 
 	}//switch
 
+	//check validate returns 1 user login entered
 	if (validate == 1)
 	{
+		//initial prompt user
 		printf("\nLogin Accepted\n");
 
 		printf("\nWelcome to XYZ Passport Database\n");
@@ -118,38 +156,42 @@ void main()
 		printf("\nEnter option: ");
 		scanf("%d", &choice);
 
+		//loop application until -1 entered
 		while (choice != -1)
 		{
+			//switch case menu option
 			switch (choice)
 			{
 			case 1:
-
+				//case 1 create linked list based on position user enters
+				//scan option
 				printf("\nPlease Enter position to add Passenger in List: ");
 				scanf("%d", &pos);
 
+				//check position call 1 of add to list functions based on user entry  
 				if (pos < 2)
 				{
 					printf("\nAdding to start of Database\n");
-					
+					//add to start
 					addPassengerToStart(&head);
 				}
 				else if (pos > listLength(head))
 				{
 					printf("\nAdd to End of Database\n");
-					
+					//add to end
 					addPassengerToEnd(head);
 				}
 				else
 				{
 					printf("\nAdd at position %d\n", pos);
-				
+					//add at position
 					addPassengerAtPos(head, pos);
 				}
 
 				break;
 
 			case 2:
-
+				//case 2 check list is not empty - else display passenger details
 				if (head == NULL)
 				{
 					printf("\nSorry Database is Empty Cannot perform operation!!!\n");
@@ -163,7 +205,7 @@ void main()
 				break;
 
 			case 3:
-
+				//case 3 check list is not empty - else search for passenger details
 				if (head == NULL)
 				{
 					printf("\nSorry Database is Empty Cannot perform operation!!!\n");
@@ -173,12 +215,11 @@ void main()
 					printf("\nSearch Passenger Details\n");
 					searchPassengerDetails(head);
 				}//if
-
 				
 				break;
 
 			case 4:
-
+				//case 4 check list is not empty - update statistics of passenger
 				if (head == NULL)
 				{
 					printf("\nSorry Database is Empty Cannot perform operation!!!\n");
@@ -188,14 +229,14 @@ void main()
 					printf("\nUpdate Passenger Statistic\n");
 					updatePassengerStatistic(head);
 				}//if
-				
 				break;
 
 			case 5:
-
+				//case 5 delete passenger from list scan for position at list
 				printf("\nPlease Enter position to Delete Passenger in List: ");
 				scanf("%d", &pos);
-
+				
+				//check list not empty
 				if(head == NULL)
 				{
 					printf("\nSorry Database is Empty\n");
@@ -205,19 +246,19 @@ void main()
 					if (pos < 2)
 					{
 						printf("\nDeleting at start of Database\n");
-						
+						//check if less tha 2 delete at start
 						deletePassengerAtStart(&head);
 					}
 					else if (pos >= 2 && pos < listLength(head))
 					{
 						printf("\nDelete at position %d in Database\n", pos);
-					
+						//check position greater than 2 and less than list length delete at position
 						deletePassengerAtPos(head, pos);
 					}
 					else
 					{
 						printf("\nDelete at end of Database\n");
-					
+						//delete at end
 						deletePassengerAtEnd(head);
 					}//if
 
@@ -226,7 +267,7 @@ void main()
 				break;
 
 			case 6:
-
+				//case 6 check list not empty - else function call to generate statistics
 				if(head == NULL)
 				{
 					printf("\nSorry Database is Empty Cannot perform operation!!!\n");
@@ -240,7 +281,7 @@ void main()
 				break;
 
 			case 7:
-
+				//check list not empty - else print passenger details list to file
 				if (head == NULL)
 				{
 					printf("\nSorry Database is Empty Cannot perform operation!!!\n");
@@ -254,7 +295,7 @@ void main()
 				break;
 
 			case 8:
-
+				//case 8 check list not empty - function call to list all uk passengers in order of birth year
 				if (head == NULL)
 				{
 					printf("\nSorry Database is Empty Cannot perform operation!!!\n");
@@ -266,12 +307,12 @@ void main()
 				}//if
 				
 				break;
-
+				//default case for invalid entry
 			default:
 				printf("\nWrong input!!! Please Try Again...\n");
 
 			}//switch
-
+			//subsequent read for menu option while not -1
 			printf("\nList Length %d\n", listLength(head));
 
 			printf("\nPlease Select from listed options below");
@@ -296,9 +337,10 @@ void main()
 	{
 		printf("\nLogin Not Accepted!!! Try Again...\n");
 	}//if
+	
+	 //else if login not accepted print error
 
-
-
+	 //check list not empty - else print final version of list to file
 	if (head == NULL)
 	{
 		printf("\nSorry Database is Empty Cannot Update File!!!\n");
@@ -314,185 +356,17 @@ void main()
 }//main
 
 
-//method list
+//function list
 
-/*
-void loadFile(FILE** loadFile, struct passengerNode** head)
-{
-	loadFile = fopen("passengerDetails.txt", "r");
-
-	struct passengerNode* temp;
-
-	struct passengerNode* newPassenger;
-
-	//struct passengerNode* temp2;
-
-	//temp2 = (struct passengerNode*)malloc(sizeof(struct passengerNode));
-
-	temp = *head;
-
-	//newPassenger = (struct passengerNode*)malloc(sizeof(struct passengerNode));
-
-	if(loadFile == NULL)
-	{
-		printf("\nFile could not be opened Try Again!!!\n");
-		return;
-	}
-	else
-	{
-		printf("\nFile opened!!!\n");
-
-		while(!feof(loadFile))
-		{
-			 //newPassenger = (struct passengerNode*)malloc(sizeof(struct passengerNode));
-
-			 //fscanf(loadFile, "%d %20s %20s %d %d %20s %d", &newPassenger->passportNum);
-
-			fscanf(loadFile, "%d", &newPassenger->passportNum);
-			fscanf(loadFile, "%20s", newPassenger->firstName);
-			fscanf(loadFile, "%20s", newPassenger->surName);
-			fscanf(loadFile, "%d", &newPassenger->yob);
-			fscanf(loadFile, "%20s", newPassenger->email);
-			fscanf(loadFile, "%d", &newPassenger->travelFromNum);
-			
-			switch(newPassenger->travelFromNum)
-			{
-			case 1:
-				strcpy(newPassenger->travelFrom, "UK");
-				break;
-
-			case 2:
-				strcpy(newPassenger->travelFrom, "Rest of Europe");
-				break;
-
-			case 3:
-				strcpy(newPassenger->travelFrom, "Asia");
-				break;
-
-			case 4:
-				strcpy(newPassenger->travelFrom, "Americas");
-				break;
-
-			case 5:
-				strcpy(newPassenger->travelFrom, "Australasia");
-				break;
-
-			}//switch
-
-			fscanf(loadFile, "%d", &newPassenger->travelClassNum);
-			
-			switch (newPassenger->travelClassNum)
-			{
-			case 1:
-				strcpy(newPassenger->travelClass, "Economy");
-				break;
-
-			case 2:
-				strcpy(newPassenger->travelClass, "Premium Economy");
-				break;
-
-			case 3:
-				strcpy(newPassenger->travelClass, "Business Class");
-				break;
-
-			case 4:
-				strcpy(newPassenger->travelFrom, "First Class");
-				break;
-
-			}//switch
-
-			fscanf(loadFile, "%d", &newPassenger->tripsToIrelandNum);
-			
-			switch (newPassenger->tripsToIrelandNum)
-			{
-			case 1:
-				strcpy(newPassenger->tripsToIreland, "Less than three times per year");
-				break;
-
-			case 2:
-				strcpy(newPassenger->tripsToIreland, "Less than three times per year");
-				break;
-
-			case 3:
-				strcpy(newPassenger->tripsToIreland, "More than five times per year");
-				break;
-
-			}//switch
-
-			fscanf(loadFile, "%d", &newPassenger->averageDurationNum);
-			
-			switch (newPassenger->averageDurationNum)
-			{
-			case 1:
-				strcpy(newPassenger->averageDuration, "One day");
-				break;
-
-			case 2:
-				strcpy(newPassenger->averageDuration, "Less than 3 days");
-				break;
-
-			case 3:
-				strcpy(newPassenger->averageDuration, "Less than 7 days");
-				break;
-
-			case 4:
-				strcpy(newPassenger->averageDuration, "More than 7 days");
-				break;
-
-			}//switch
-			
-			//fflush(stdin);
-
-			if(head == NULL)
-			{
-
-				newPassenger->next = *head;
-
-				*head = newPassenger;
-				//newPassenger = temp2;
-				//newPassenger->next = NULL;
-				
-			}
-			else
-			{
-				//temp = head;
-
-				while (temp->next != NULL)
-				{
-					temp = temp->next;
-				}//while
-
-				temp->next = newPassenger;
-
-				newPassenger->next = NULL;
-			}//if
-
-			printf("\nPassenger Name: %s %s\n", newPassenger->firstName, newPassenger->surName);
-			printf("\nPassport Number: %d\n", newPassenger->passportNum);
-			printf("\nPassenger Year of Birth: %d\n", newPassenger->yob);
-			printf("\nPassenger E-mail: %s\n", newPassenger->email);
-			printf("\nPassenger Area Travelled from: %d - %s\n", newPassenger->travelFromNum, newPassenger->travelFrom);
-			printf("\nPassenger Travel Class: %d - %s\n", newPassenger->travelClassNum, newPassenger->travelClass);
-			printf("\nTrips to Ireland per year: %d - %s\n", newPassenger->tripsToIrelandNum, newPassenger->tripsToIreland);
-			printf("\nPassenger Average duration of stay: %d - %s\n\n", newPassenger->averageDurationNum, newPassenger->averageDuration);
-
-			newPassenger = (struct passengerNode*)malloc(sizeof(struct passengerNode));
-
-		}//while
-		
-		printf("\nFile read into linked list\n");
-
-		fclose(loadFile);
-
-	}//if
-
-}//loadFile
-*/
-
+//load file function - has error to be fixed prints null passenger after list loaded and display function called
+//I know this is due to head not being dereferenced twice when passed to function but can't figure it out at the minute so 
+//i will have to go with this for now but still works and doesn't cause crash of code
 struct passengerNode* loadFile(FILE** loadFile, struct passengerNode* head)
 {
+	//open file for processing
 	loadFile = fopen("passengerDetails.txt", "r");
 
+	//check file opened otherwise error message
 	if (loadFile == NULL)
 	{
 		printf("\nFile could not be opened Try Again!!!\n");
@@ -500,15 +374,17 @@ struct passengerNode* loadFile(FILE** loadFile, struct passengerNode* head)
 	}
 	else
 	{
-		printf("\nFile opened!!!\n");
-
+		//printf("\nFile opened!!!\n");
+		//loop file while not end of file
 		while (!feof(loadFile))
 		{
-			
+			//check for head = null, add to start of list 
 			if (head == NULL)
 			{
+				//alllocate memory for node
 				head = (struct passengerNode*)malloc(sizeof(struct passengerNode));
 
+				//begin scan of list variables
 				fscanf(loadFile, "%d", &head->passportNum);
 				fscanf(loadFile, "%20s", head->firstName);
 				fscanf(loadFile, "%20s", head->surName);
@@ -516,6 +392,7 @@ struct passengerNode* loadFile(FILE** loadFile, struct passengerNode* head)
 				fscanf(loadFile, "%20s", head->email);
 				fscanf(loadFile, "%d", &head->travelFromNum);
 
+				//switch scanned integer for string allocation in list 
 				switch (head->travelFromNum)
 				{
 				case 1:
@@ -540,8 +417,10 @@ struct passengerNode* loadFile(FILE** loadFile, struct passengerNode* head)
 
 				}//switch
 
+				//scan next integer in file
 				fscanf(loadFile, "%d", &head->travelClassNum);
 
+				//switch scanned integer for string allocation in list
 				switch (head->travelClassNum)
 				{
 				case 1:
@@ -562,8 +441,10 @@ struct passengerNode* loadFile(FILE** loadFile, struct passengerNode* head)
 
 				}//switch
 
+				 //scan next integer in file
 				fscanf(loadFile, "%d", &head->tripsToIrelandNum);
 
+				//switch scanned integer for string allocation in list
 				switch (head->tripsToIrelandNum)
 				{
 				case 1:
@@ -580,8 +461,10 @@ struct passengerNode* loadFile(FILE** loadFile, struct passengerNode* head)
 
 				}//switch
 
+				 //scan next integer in file
 				fscanf(loadFile, "%d", &head->averageDurationNum);
 
+				//switch scanned integer for string allocation in list
 				switch (head->averageDurationNum)
 				{
 				case 1:
@@ -602,8 +485,10 @@ struct passengerNode* loadFile(FILE** loadFile, struct passengerNode* head)
 
 				}//switch
 
+				//point node to null
 				head->next = NULL;
 
+				//print used for testing list scanned correctly
 				printf("\nPassenger Name: %s %s\n", head->firstName, head->surName);
 				printf("\nPassport Number: %d\n", head->passportNum);
 				printf("\nPassenger Year of Birth: %d\n", head->yob);
@@ -616,10 +501,13 @@ struct passengerNode* loadFile(FILE** loadFile, struct passengerNode* head)
 			}
 			else
 			{
+				//assign a temp variable to head to loop from start through to end of list
 				struct passengerNode* temp = head;
 
+				//allocate memory for new node to end of list
 				struct passengerNode* curr = (struct passengerNode*)malloc(sizeof(struct passengerNode));
 
+				//scan variables for new node
 				fscanf(loadFile, "%d", &curr->passportNum);
 				fscanf(loadFile, "%20s", curr->firstName);
 				fscanf(loadFile, "%20s", curr->surName);
@@ -627,6 +515,7 @@ struct passengerNode* loadFile(FILE** loadFile, struct passengerNode* head)
 				fscanf(loadFile, "%20s", curr->email);
 				fscanf(loadFile, "%d", &curr->travelFromNum);
 
+				//switch scanned integer for string allocation
 				switch (curr->travelFromNum)
 				{
 				case 1:
@@ -651,8 +540,10 @@ struct passengerNode* loadFile(FILE** loadFile, struct passengerNode* head)
 
 				}//switch
 
+				//scan next int from file
 				fscanf(loadFile, "%d", &curr->travelClassNum);
 
+				//switch scanned integer for string allocation
 				switch (curr->travelClassNum)
 				{
 				case 1:
@@ -673,8 +564,10 @@ struct passengerNode* loadFile(FILE** loadFile, struct passengerNode* head)
 
 				}//switch
 
+				 //scan next int from file
 				fscanf(loadFile, "%d", &curr->tripsToIrelandNum);
 
+				//switch scanned integer for string allocation
 				switch (curr->tripsToIrelandNum)
 				{
 				case 1:
@@ -691,8 +584,10 @@ struct passengerNode* loadFile(FILE** loadFile, struct passengerNode* head)
 
 				}//switch
 
+				 //scan next int from file
 				fscanf(loadFile, "%d", &curr->averageDurationNum);
 
+				//switch scanned integer for string allocation
 				switch (curr->averageDurationNum)
 				{
 				case 1:
@@ -713,15 +608,18 @@ struct passengerNode* loadFile(FILE** loadFile, struct passengerNode* head)
 
 				}//switch
 
+				//loop temp until temp->next is not null 
 				while (temp->next != NULL)
 				{
 					temp = temp->next;
 				}//while
 
+				//assign new node to next position in list
 				temp->next = curr;
-
+				//point new node next to null
 				curr->next = NULL;
 
+				//print used for testing list scanned correctly
 				printf("\nPassenger Name: %s %s\n", curr->firstName, curr->surName);
 				printf("\nPassport Number: %d\n", curr->passportNum);
 				printf("\nPassenger Year of Birth: %d\n", curr->yob);
@@ -735,28 +633,31 @@ struct passengerNode* loadFile(FILE** loadFile, struct passengerNode* head)
 
 		}//while
 
+
 		printf("\nFile read into linked list\n");
 
 		fclose(loadFile);
 
-		return head;
-
 	}//if
 
-	//return head;
+	return head;
 
-}//loadFile
+}//end loadFile
 
 
+//user login function takes file and user struct
 int userLogin(FILE** logIn, struct login* user)
 {
+	//open log in file
 	logIn = fopen("users.txt", "r");
 
+	//variables for manipulation
 	char userNames[3][20];
 	char ch;
 	char passWords[3][20];
 	int pos, i = 0;
 
+	//check login file not null
 	if(logIn == NULL)
 	{
 		printf("\nFile could not be opened!!! Try Again...\n");
@@ -764,26 +665,31 @@ int userLogin(FILE** logIn, struct login* user)
 	}
 	else
 	{
-		printf("\nFile opened!!!\n");
+		//printf("\nFile opened!!!\n");
 
+		//prompt user for username & password
 		printf("Enter username (Case Sensitive): ");
 		scanf("%s", user->username);
 
 		printf("\nEnter Password (6 Characters): ");
 		//scanf("%d", &user->password);
 		
+		//while loop is true 
 		while(1)
 		{
+			//ch var gets character
 			ch = getch();
 
 			//ASCII value for enter = 13
 			if(ch == ENTER)
 			{
+				//add null character to end of password after enter key hit
 				user->password[i] = '\0';
 				break;
 			}
 			else if(ch == BKSP)//backspace 8
 			{
+				//conditional delete * characters
 				if(i > 0)
 				{
 					i--;
@@ -792,10 +698,12 @@ int userLogin(FILE** logIn, struct login* user)
 			}
 			else if(ch == TAB || ch == SPACE)//tab 9 & space 32
 			{
+				//handling for space and tab buttons
 				continue;
 			}
 			else
 			{
+				//add ch to password & print * to screen while user enters password
 				user->password[i] = ch;
 				i++;
 				printf("*");
@@ -803,64 +711,77 @@ int userLogin(FILE** logIn, struct login* user)
 
 		}//while
 
-		//printf("\nPassword: %s\n", user->password);
-		
+		//assign pos to 0 for char array position
 		pos = 0;
 
+		//while loop not end of file
 		while(!feof(logIn))
 		{
+			//scan user in file at pos
 			fscanf(logIn, "%s %s", userNames[pos], passWords[pos]);
 
-			//printf("\nScanned: %s %d", userNames[pos], passWords[pos]);
-
+			//compare username & password entered to username & password at pos in file
 			if (strcmp(userNames[pos], user->username) == 0 && strcmp(passWords[pos], user->password) == 0)
 			{
+				//user found return 1
 				printf("\nUser Found\n");
 				printf("\nUsername Found: %s, Password: ****** Accepted\n", user->username);
 				return 1;
-			}
+			}//if
 			
+			//check if end of file
 			if(feof(logIn))
 			{
+				//return 0 no match
 				printf("\nNot Found!!! Try Again...\n");
 				printf("\nUserName: %s, Password: ******  Not Found Try Again!!!\n", user->username);
 				return 0;
-			}
-
+			}//if
+			//increment pos for for next element in array
 			pos++;
 
 		}//while
 
+		//close file
 		fclose(logIn);
-
 	}//if
 
 }//userLogin
 
+//seacrh passport number function
 int searchPassportNum(struct passengerNode* head, int passport)
 {
+	//temp struct variable
 	struct passengerNode* temp;
-	struct passengerNode* prev;
 
+	//asign head to temp
 	temp = head;
 
+	//char option 
 	char option;
 
+	//loop while temp not null
 	while(temp != NULL)
 	{
+		//check if temp number equal to passport number entered
 		if(temp->passportNum == passport)
 		{
+			//print error message number already exists
 			printf("\nPassport Number already exists in Database!!! Passport Number must be Unique...");
 			printf("\nPlease Try Again...\n");
+			
+			//offer option to update user with this number
 			printf("\nWould you like to Update Passenger Id - %d Statistics?", passport);
 			printf("\nEnter (y/Y) Yes or (n/N) No\n");
 			printf("Enter option: ");
 			scanf(" %c", &option);
 
+			//switch option
 			switch(option)
 			{
 			case 'y':
 			case 'Y':
+				//update this passenger number details
 				printf("\nUpdate Passenger Id - %d", passport);
 				updatePassengerByNumber(head, passport);
 				return 0;
@@ -868,6 +789,7 @@ int searchPassportNum(struct passengerNode* head, int passport)
 
 			case 'n':
 			case 'N':
+				//return if no entered to update passenger
 				return 0;
 				break;
 
@@ -878,6 +800,7 @@ int searchPassportNum(struct passengerNode* head, int passport)
 
 		}//if
 		
+		//assign temp to next in list
 		temp = temp->next;
 
 	}//while
@@ -886,23 +809,27 @@ int searchPassportNum(struct passengerNode* head, int passport)
 
 }//searchPassportNum
 
+//check email address format function
 char *checkEmailAddress(char *email)
 {
-
+	//declare needed symbols and string
 	char atSymbol = '@', dotSymbol = '.', dotCom[10] = ".com";
 
+	//temp string
 	char temp[30];
 
+	//int vars
 	int size, foundAt = 0, atCounter = 0, dotCounter = 0;
 
+	//assign size to length of string email
 	size = strlen(email);
 
+	//copy email to temp
 	strcpy(temp, email);
-
-	printf("\nString length %d\ntemp string is %s\n", size, temp);
 
 	for(int i = 0; i < size; i++)
 	{
+		//loop through temp check for 1 occurence of @ and . symbol
 		if(temp[i] == atSymbol)
 		{
 			atCounter++;
@@ -914,18 +841,14 @@ char *checkEmailAddress(char *email)
 		}//if
 
 	}//for
-
-	printf("\nAt counter = %d\ndot counter %d\n", atCounter, dotCounter);
-
 	
+	//check for occurence of @ symbol and check string has .com
 	if(strchr(email, atSymbol) && strstr(email, dotCom))
 	{
 		foundAt = 1;
 	}//if
 
-
-	printf("\nFound at = %d\n", foundAt);
-
+	//if all conditions met return valid email
 	if(foundAt == 1 && atCounter == 1 && dotCounter == 1)
 	{
 		printf("\n%s Accepted", email);
@@ -934,40 +857,50 @@ char *checkEmailAddress(char *email)
 	}
 	else
 	{
+		//email not valid return null
 		printf("\n%s Address not Valid!!! Please Try again...\n", email);
 		return NULL;
 	}//if
 
 }//checkEmail
 
-
+//add passenger to start of list function
 void addPassengerToStart(struct passengerNode** head)
 {
+	//declare new node
 	struct passengerNode* newPassenger;
 
+	//helper vars for number and string manipulation
 	int passportNum, travelArea, travelClass, tripsIreland, duration;
 
+	//allocate memory for new node
 	newPassenger = (struct passengerNode*)malloc(sizeof(struct passengerNode));
 
+	//helper string for email manipulation
 	char *tempEmail;
-
+	//aloocate memory for temp email address
 	tempEmail = (char*)malloc(30 * sizeof(char));
 
+	//prompt user for passport number
 	printf("\nPlease enter Passport number: ");
 	scanf("%d", &passportNum);
 
+	//check if head is not null
 	if(head != NULL)
 	{
+		//assign passport number to search passport number if head not null
 		newPassenger->passportNum = searchPassportNum(head, passportNum);
 	}
 	else
 	{
+		//list is empty assign passport number
 		newPassenger->passportNum = passportNum;
 	}//if
 
-	
+	//check passport number valid continue with passenger entry
 	if(newPassenger->passportNum != 0)
 	{
+		//enter passenger name & birth year
 		printf("\nPlease enter Passenger firstname: ");
 		scanf("%s", newPassenger->firstName);
 
@@ -977,17 +910,15 @@ void addPassengerToStart(struct passengerNode** head)
 		printf("\nPlease enter Passenger Year of Birth: ");
 		scanf("%d", &newPassenger->yob);
 
+		//do-while handles email address calls function while null value returned
 		do
 		{
 			printf("\nPlease enter Valid Passenger E-mail (myName@mail.com): ");
 			scanf("%s", tempEmail);
 
-			printf("\n%s email before method\n", tempEmail);
-
 		} while(checkEmailAddress(tempEmail) == NULL);
 		
-		
-
+		//handle case where email may be null
 		if(tempEmail == NULL)
 		{
 			printf("\nEmail Address %s Not Valid format!!! Please Try Again...\n", tempEmail);
@@ -995,11 +926,13 @@ void addPassengerToStart(struct passengerNode** head)
 		}
 		else
 		{
+			//assign email address if valid
 			strcpy(newPassenger->email, tempEmail);
-			printf("\n%s Address after Validation\n", newPassenger->email);
+			//free memory for temp email
 			free(tempEmail);
 		}//if
 
+		//do-while area travelled from
 		do
 		{
 			printf("\nPlease enter Area Traveled from: ");
@@ -1014,6 +947,7 @@ void addPassengerToStart(struct passengerNode** head)
 		} while (travelArea < 1 || travelArea > 5);
 		//do-while
 
+		//switch travel area for string assignment
 		switch (travelArea)
 		{
 		case 1:
@@ -1046,7 +980,7 @@ void addPassengerToStart(struct passengerNode** head)
 
 		}//switch
 
-
+		 //do-while travel class
 		do
 		{
 			printf("\nPlease enter Travel Class to Ireland: ");
@@ -1060,7 +994,7 @@ void addPassengerToStart(struct passengerNode** head)
 		} while (travelClass < 1 || travelClass > 4);
 		//do-while
 
-
+		//switch travel class for string assignment
 		switch (travelClass)
 		{
 		case 1:
@@ -1088,6 +1022,7 @@ void addPassengerToStart(struct passengerNode** head)
 
 		}//switch
 
+		 //do-while trips to ireland
 		do
 		{
 			printf("\nPlease enter number of Trips to Ireland per year: ");
@@ -1100,7 +1035,7 @@ void addPassengerToStart(struct passengerNode** head)
 		} while (tripsIreland < 1 || tripsIreland > 3);
 		//do-while
 
-
+		//switch trips ireland for string assignment
 		switch (tripsIreland)
 		{
 		case 1:
@@ -1123,6 +1058,7 @@ void addPassengerToStart(struct passengerNode** head)
 
 		}//switch
 
+		 //do-while trips to ireland
 		do
 		{
 			printf("\nPlease enter Average Duration of Stay: ");
@@ -1136,7 +1072,7 @@ void addPassengerToStart(struct passengerNode** head)
 		} while (duration < 1 || duration > 4);
 		//do-while
 
-
+		//switch average duration for string assignment
 		switch (duration)
 		{
 		case 1:
@@ -1164,8 +1100,10 @@ void addPassengerToStart(struct passengerNode** head)
 
 		}//switch
 
+		//assign new node next to null
 		newPassenger->next = *head;
 
+		//assign new nide to heads position
 		*head = newPassenger;
 
 	}
@@ -1175,8 +1113,6 @@ void addPassengerToStart(struct passengerNode** head)
 		return;
 	}//if
 
-	
-	
 }//addAtStart
 
 void addPassengerToEnd(struct passengerNode* head)
@@ -1227,7 +1163,7 @@ void addPassengerToEnd(struct passengerNode* head)
 		else
 		{
 			strcpy(newPassenger->email, tempEmail);
-			printf("\n%s Address after method\n", newPassenger->email);
+			//printf("\n%s Address after method\n", newPassenger->email);
 			free(tempEmail);
 		}//if
 
@@ -1412,8 +1348,6 @@ void addPassengerToEnd(struct passengerNode* head)
 		printf("\nInvalid Passport Number Entered!!!\n");
 	}//if
 
-	
-
 }//addToEnd
 
 void addPassengerAtPos(struct passengerNode* head, int pos)
@@ -1464,7 +1398,6 @@ void addPassengerAtPos(struct passengerNode* head, int pos)
 		else
 		{
 			strcpy(newPassenger->email, tempEmail);
-			printf("\n%s Address after method\n", newPassenger->email);
 			free(tempEmail);
 		}//if
 
@@ -1652,23 +1585,33 @@ void addPassengerAtPos(struct passengerNode* head, int pos)
 
 }//addAtPos
 
+//display list sorted function
 void displayList(struct passengerNode* head, int size)
 {
+	//temp struct
 	struct passengerNode* temp;
 	
+	//helper vars & int pointer declared
 	int counter = 0, tempInt, *ptr;
 
+	//assign head totemp
 	temp = head;
 
+	//malloc ptr for ints
 	ptr = (int*)malloc(size * sizeof(int));
 
+	//loop through list
 	while (temp != NULL)
 	{
+		//assign passport number to address in memory
 		*(ptr + counter) = temp->passportNum;
+		//increment counter for next address
 		counter++;
+		//next item in list
 		temp = temp->next;
 	}//while
 
+	//bubble sort memory addresses from lowest to highest size var from list length function
 	for (int i = 0; i < size; i++)
 	{
 		for (int j = i + 1; j < size; j++)
@@ -1683,14 +1626,19 @@ void displayList(struct passengerNode* head, int size)
 
 	}//for
 
+	//assign temp to head again after first loop
 	temp = head;
 
+	//assign counter to 0 again after loop
 	counter = 0;
 
+	//loop less than list length size
 	for (int i = 0; i < size; i++)
 	{
+		//while loop through list
 		while (temp != NULL)
 		{
+			//check if pointer address = to list passport number and print passenger
 			if (*(ptr + i) == temp->passportNum)
 			{
 				counter++;
@@ -1703,13 +1651,14 @@ void displayList(struct passengerNode* head, int size)
 				printf("\nPassenger Travel Class: %d - %s\n", temp->travelClassNum, temp->travelClass);
 				printf("\nTrips to Ireland per year: %d - %s\n", temp->tripsToIrelandNum, temp->tripsToIreland);
 				printf("\nPassenger Average duration of stay: %d - %s\n\n", temp->averageDurationNum, temp->averageDuration);
-				//temp = temp->next;
 			}//if
 
+			//move temp to next in list
 			temp = temp->next;
 
 		}//while
 
+		//assign temp to start of list for next iteration in for loop
 		temp = head;
 
 	}//for
@@ -1734,15 +1683,20 @@ int listLength(struct passengerNode* head)
 
 }//listLength
 
+//search passenger details
 void searchPassengerDetails(struct passengerNode* head)
 {
+	//vars for options and search functions
 	int passportNum, option, counter = 1;
 	char firstName[20], surName[20];
 
+	//temp structure
 	struct passengerNode* temp;
 
+	//assign head to temp
 	temp = head;
 
+	//do-while option for search
 	do
 	{
 		printf("\nChoose from search options");
@@ -1752,9 +1706,12 @@ void searchPassengerDetails(struct passengerNode* head)
 		scanf("%d", &option);
 	} while(option < 1 || option > 2);
 
+	//switch option for search passport number or first and last name
 	switch(option)
 	{
 	case 1:
+		//case 1 - prompt for passport number to search and loop through list and compare passport number
+		//return if passport number found
 		printf("\nPlease enter Passport number to search: ");
 		scanf("%d", &passportNum);
 
@@ -1786,7 +1743,8 @@ void searchPassengerDetails(struct passengerNode* head)
 		break;
 
 	case 2:
-
+		//case 2 - prompt for first and last name search list and compare names to names in list
+		//return if found 
 		printf("\nPlease enter Passenger firstname to search: ");
 		scanf("%s", firstName);
 		
@@ -1827,20 +1785,27 @@ void searchPassengerDetails(struct passengerNode* head)
 
 }//searchPassengerDetails
 
+//update passenger by passport number
 void updatePassengerByNumber(struct passengerNode* head, int passport)
 {
+	//temp structure for list
 	struct passengerNode* temp;
 
+	//vars for string manipulation & counter
 	int travelClass, travelArea, tripsIreland, duration, counter = 1;
 
+	//assign head to temp
 	temp = head;
 
+	//loop through list
 	while (temp != NULL)
 	{
+		//if passport number matches start update of passenger details
 		if (passport == temp->passportNum)
 		{
 			printf("\nPassenger passport number Found at position %d in Database\n", counter);
 
+			//do-while to update passenger travel area
 			do
 			{
 				printf("\nPlease enter Area Traveled from: ");
@@ -1855,6 +1820,7 @@ void updatePassengerByNumber(struct passengerNode* head, int passport)
 			} while (travelArea < 1 || travelArea > 5);
 			//do-while
 
+			//switch otion for string assignment
 			switch (travelArea)
 			{
 			case 1:
@@ -1887,7 +1853,7 @@ void updatePassengerByNumber(struct passengerNode* head, int passport)
 
 			}//switch
 
-
+			 //do-while to update passenger travel class
 			do
 			{
 				printf("\nPlease enter Travel Class to Ireland: ");
@@ -1901,7 +1867,7 @@ void updatePassengerByNumber(struct passengerNode* head, int passport)
 			} while (travelClass < 1 || travelClass > 4);
 			//do-while
 
-
+			//switch otion for string assignment
 			switch (travelClass)
 			{
 			case 1:
@@ -2031,24 +1997,31 @@ void updatePassengerByNumber(struct passengerNode* head, int passport)
 
 }//updateByPassportNumber
 
+//update passenger by name
 void updatePassengerByName(struct passengerNode* head, char first[20], char last[20])
 {
+	//temp node
 	struct passengerNode* temp;
 
-	int passportNum, option, counter = 1;
+	//counter
+	int counter = 1;
 
+	//ints for string assignment
 	int travelArea, travelClass, tripsIreland, duration;
 
-	//char firstName[20], surName[20];
-
+	//assign head to temp
 	temp = head;
 
+	//loop through list
 	while (temp != NULL)
 	{
+		//compare first name and last name to passed in strings update details if found
 		if (strcmp(first, temp->firstName) == 0 && strcmp(last, temp->surName) == 0)
 		{
 			printf("\n%s %s Found in Database!!!\n", first, last);
 
+			//if found update passenger details
+			//do-while travel area
 			do
 			{
 				printf("\nPlease enter Area Traveled from: ");
@@ -2063,6 +2036,7 @@ void updatePassengerByName(struct passengerNode* head, char first[20], char last
 			} while (travelArea < 1 || travelArea > 5);
 			//do-while
 
+			//switch option for string manipulation
 			switch (travelArea)
 			{
 			case 1:
@@ -2095,7 +2069,7 @@ void updatePassengerByName(struct passengerNode* head, char first[20], char last
 
 			}//switch
 
-
+			//do-while travel class
 			do
 			{
 				printf("\nPlease enter Travel Class to Ireland: ");
@@ -2109,7 +2083,7 @@ void updatePassengerByName(struct passengerNode* head, char first[20], char last
 			} while (travelClass < 1 || travelClass > 4);
 			//do-while
 
-
+			//switch travel class for string assignment 
 			switch (travelClass)
 			{
 			case 1:
@@ -2137,6 +2111,7 @@ void updatePassengerByName(struct passengerNode* head, char first[20], char last
 
 			}//switch
 
+			//do-while trips to ireland
 			do
 			{
 				printf("\nPlease enter number of Trips to Ireland per year: ");
@@ -2149,7 +2124,7 @@ void updatePassengerByName(struct passengerNode* head, char first[20], char last
 			} while (tripsIreland < 1 || tripsIreland > 3);
 			//do-while
 
-
+			//switch trips ireland for string assignment
 			switch (tripsIreland)
 			{
 			case 1:
@@ -2172,6 +2147,7 @@ void updatePassengerByName(struct passengerNode* head, char first[20], char last
 
 			}//switch
 
+			//do-while average stay
 			do
 			{
 				printf("\nPlease enter Average Duration of Stay: ");
@@ -2185,7 +2161,7 @@ void updatePassengerByName(struct passengerNode* head, char first[20], char last
 			} while (duration < 1 || duration > 4);
 			//do-while
 
-
+			//switch average stay for string assignment 
 			switch (duration)
 			{
 			case 1:
@@ -2207,7 +2183,6 @@ void updatePassengerByName(struct passengerNode* head, char first[20], char last
 				temp->averageDurationNum = duration;
 				strcpy(temp->averageDuration, "More than 7 Days");
 				break;
-
 			default:
 				printf("\nInvalid option!!! Try Again...\n");
 
@@ -2223,34 +2198,33 @@ void updatePassengerByName(struct passengerNode* head, char first[20], char last
 			printf("\nPassenger Travel Class: %d - %s\n", temp->travelClassNum, temp->travelClass);
 			printf("\nTrips to Ireland per year: %d - %s\n", temp->tripsToIrelandNum, temp->tripsToIreland);
 			printf("\nPassenger Average duration of stay: %d - %s\n\n", temp->averageDurationNum, temp->averageDuration);
-
+			//return once updated
 			return;
 		}
 		else
 		{
+			//increment counter & move temp to nexr
 			counter++;
 			temp = temp->next;
 		}//if
 
 	}//while
 
+	//if not found
 	printf("\nPassenger name %s %s not found in Database!!! Please try again...\n", first, last);
-
 
 }//updateByName
 
+//update passenger stats
 void updatePassengerStatistic(struct passengerNode* head)
 {
-	struct passengerNode* temp;
+	//int vars for passport number and option
+	int passportNum, option;
 
-	int passportNum, option, counter = 1;
-
-	int travelArea, travelClass, tripsIreland, duration;
-
+	//strings for passenger name
 	char firstName[20], surName[20];
 
-	temp = head;
-
+	//do-while option validation
 	do
 	{
 		printf("\nChoose from search options");
@@ -2260,9 +2234,11 @@ void updatePassengerStatistic(struct passengerNode* head)
 		scanf("%d", &option);
 	} while (option < 1 || option > 2);
 
+	//switch option entered
 	switch (option)
 	{
 	case 1:
+		//case 1 enter passport number and call update by passport num function
 		printf("\nPlease enter Passport number to search: ");
 		scanf("%d", &passportNum);
 
@@ -2270,6 +2246,7 @@ void updatePassengerStatistic(struct passengerNode* head)
 		break;
 
 	case 2:
+		//case 2 - enter names and call update by name function
 		printf("\nPlease enter Passenger firstname to search: ");
 		scanf("%s", firstName);
 
@@ -2338,20 +2315,27 @@ void deletePassengerAtPos(struct passengerNode* head, int pos)
 
 }//deleteAtPos
 
+//generate passenger stats function
 void generatePassengerStats(struct passengerNode* head)
 {
 	int option;
 
-	printf("\nPlease choose from options listed below to Generate Statistics base upon:");
-	printf("\n1. Travel Class");
-	printf("\n2. Born Before 1980");
-	printf("\nEnter option: ");
-	scanf("%d", &option);
+	//do-while validation
+	do
+	{
+		printf("\nPlease choose from options listed below to Generate Statistics base upon:");
+		printf("\n1. Travel Class");
+		printf("\n2. Born Before 1980");
+		printf("\nEnter option: ");
+		scanf("%d", &option);
 
+	} while (option < 1 || option > 2);
+	
+	//switch option entered
 	switch(option)
 	{
 	case 1:
-
+		//case 1 call get travel class stats
 		printf("\nTravel Class Statistics");
 		printf("\n========================\n");
 
@@ -2360,7 +2344,7 @@ void generatePassengerStats(struct passengerNode* head)
 		break;
 
 	case 2:
-
+		//case 2 call get 1980 travel stats
 		printf("\nTravel Class Statistics");
 		printf("\n========================\n");
 
@@ -2376,29 +2360,25 @@ void generatePassengerStats(struct passengerNode* head)
 
 }//generateStats
 
+//generate stats based on travel class function
 void getTravelClassStats(struct passengerNode* head)
 {
+	//temp struct
 	struct passengerNode* temp;
 
-	int listCounter = 0, statCounter = 0, classOption;
+	//counter & option vars
+	int statCounter = 0, classOption;
 
+	//option & travel class string
 	char option, travelClass[20];
 
+	//per cent var
 	float perCent;
 
+	//assign head to temp
 	temp = head;
 
-	while (temp != NULL)
-	{
-		listCounter++;
-		temp = temp->next;
-
-	}//while
-
-	printf("\nNumber of Passengers in Database %d\n", listCounter);
-
-	temp = head;
-
+	//do-while validate travel class option
 	do
 	{
 		printf("\nSelect Travel Class to Generate Statistics");
@@ -2412,6 +2392,7 @@ void getTravelClassStats(struct passengerNode* head)
 	} while(classOption < 1 || classOption > 4);
 	//do-while
 
+	//switch option for string assignment
 	switch(classOption)
 	{
 	case 1:
@@ -2435,6 +2416,7 @@ void getTravelClassStats(struct passengerNode* head)
 
 	}//switch
 
+	//print menu to prompt user for stat generation
 	printf("\nTravel Class Statistic list");
 	printf("\nPlease Enter Character from list below to Generate Statistics");
 	printf("\nA. %% of Passengers who travel from the UK");
@@ -2448,55 +2430,56 @@ void getTravelClassStats(struct passengerNode* head)
 	printf("\nI. %% of Passengers who spent on average more than 7 days in Ireland\n");
 	printf("Enter option: ");
 	scanf(" %c", &option);
-	//option = getchar();
-
+	
+	//switch menu option entered
 	switch (option)
 	{
 	case 'a':
 	case 'A':
-
+		//case A generate stats for UK & travel class
 		while (temp != NULL)
 		{
+			//loop list & compare values for stat count
 			if (strcmp(temp->travelFrom, "UK") == 0 && strcmp(temp->travelClass, travelClass) == 0)
 			{
 				statCounter++;
 			}//if
 
 			temp = temp->next;
-
 		}//while
 
-		perCent = ((float)statCounter / listCounter) * 100;
-
+		 //per cent formula
+		perCent = ((float)statCounter / listLength(head)) * 100;
 		printf("\n%% of Passengers in Database who travel from the UK & in Travel class %s is %.2f %%\n", travelClass, perCent);
 
 		break;
 
 	case 'b':
 	case 'B':
-
+		//case B generate stats for Rest of Europe & travel class
 		while (temp != NULL)
 		{
+			//loop list & compare values for stat count
 			if (strcmp(temp->travelFrom, "Rest of Europe") == 0 && strcmp(temp->travelClass, travelClass) == 0)
 			{
 				statCounter++;
 			}//if
 
 			temp = temp->next;
-
 		}//while
 
-		perCent = ((float)statCounter / listCounter) * 100;
-
+		 //per cent formula
+		perCent = ((float)statCounter / listLength(head)) * 100;
 		printf("\n%% of Passengers in Database who travel from the Rest of Europe & in Travel class %s is %.2f %%\n", travelClass, perCent);
 
 		break;
 
 	case 'c':
 	case 'C':
-
+		//case C generate stats for Asia & travel class
 		while (temp != NULL)
 		{
+			//loop list & compare values for stat count
 			if (strcmp(temp->travelFrom, "Asia") == 0 && strcmp(temp->travelClass, travelClass) == 0)
 			{
 				statCounter++;
@@ -2506,57 +2489,58 @@ void getTravelClassStats(struct passengerNode* head)
 
 		}//while
 
-		perCent = ((float)statCounter / listCounter) * 100;
-
+		 //per cent formula
+		perCent = ((float)statCounter / listLength(head)) * 100;
 		printf("\n%% of Passengers in Database who travel from Asia & in Travel class %s is %.2f %%\n", travelClass, perCent);
 
 		break;
 
 	case 'd':
 	case 'D':
-
+		//case D generate stats for Americas & travel class
 		while (temp != NULL)
 		{
+			//loop list & compare values for stat count
 			if (strcmp(temp->travelFrom, "Americas") == 0 && strcmp(temp->travelClass, travelClass) == 0)
 			{
 				statCounter++;
 			}//if
 
 			temp = temp->next;
-
 		}//while
 
-		perCent = ((float)statCounter / listCounter) * 100;
-
+		 //per cent formula
+		perCent = ((float)statCounter / listLength(head)) * 100;
 		printf("\n%% of Passengers in Database who travel from the Americas & in Travel class %s is %.2f %%\n", travelClass, perCent);
 
 		break;
 
 	case 'e':
 	case 'E':
-
+		//case E generate stats for Austarlasia & travel class
 		while (temp != NULL)
 		{
+			//loop list & compare values for stat count
 			if (strcmp(temp->travelFrom, "Australasia") == 0 && strcmp(temp->travelClass, travelClass) == 0)
 			{
 				statCounter++;
 			}//if
 
 			temp = temp->next;
-
 		}//while
 
-		perCent = ((float)statCounter / listCounter) * 100;
-
+		 //per cent formula
+		perCent = ((float)statCounter / listLength(head)) * 100;
 		printf("\n%% of Passengers in Database who travel from the Australasia & in Travel class %s is %.2f %%\n", travelClass, perCent);
 
 		break;
 
 	case 'f':
 	case 'F':
-
+		//case F generate stats for 1 day stay & travel class
 		while (temp != NULL)
 		{
+			//loop list & compare values for stat count
 			if (strcmp(temp->averageDuration, "One Day") == 0 && strcmp(temp->travelClass, travelClass) == 0)
 			{
 				statCounter++;
@@ -2566,7 +2550,8 @@ void getTravelClassStats(struct passengerNode* head)
 
 		}//while
 
-		perCent = ((float)statCounter / listCounter) * 100;
+		 //per cent formula
+		perCent = ((float)statCounter / listLength(head)) * 100;
 
 		printf("\n%% of Passengers in Database who spent on Average one day in Ireland & in Travel class %s is %.2f %%\n", travelClass, perCent);
 
@@ -2574,19 +2559,20 @@ void getTravelClassStats(struct passengerNode* head)
 
 	case 'g':
 	case 'G':
-
+		//case G generate stats for less than 3 day stay & travel class
 		while (temp != NULL)
 		{
+			//loop list & compare values for stat count
 			if (strcmp(temp->averageDuration, "Less than 3 Days") == 0 && strcmp(temp->travelClass, travelClass) == 0)
 			{
 				statCounter++;
 			}//if
 
 			temp = temp->next;
-
 		}//while
 
-		perCent = ((float)statCounter / listCounter) * 100;
+		 //per cent formula
+		perCent = ((float)statCounter / listLength(head)) * 100;
 
 		printf("\n%% of Passengers in Database who spent on Average less than 3 days in Ireland & in Travel class %s is %.2f %%\n", travelClass, perCent);
 
@@ -2594,9 +2580,10 @@ void getTravelClassStats(struct passengerNode* head)
 
 	case 'h':
 	case 'H':
-
+		//case H generate stats for less than 7 day stay & travel class
 		while (temp != NULL)
 		{
+			//loop list & compare values for stat count
 			if (strcmp(temp->averageDuration, "Less than 7 Days") == 0 && strcmp(temp->travelClass, travelClass) == 0)
 			{
 				statCounter++;
@@ -2606,7 +2593,8 @@ void getTravelClassStats(struct passengerNode* head)
 
 		}//while
 
-		perCent = ((float)statCounter / listCounter) * 100;
+		 //per cent formula
+		perCent = ((float)statCounter / listLength(head)) * 100;
 
 		printf("\n%% of Passengers in Database who spent on Average less than 7 days in Ireland & in Travel class %s & in Travel Class %s is %.2f %%\n", travelClass, perCent);
 
@@ -2614,9 +2602,11 @@ void getTravelClassStats(struct passengerNode* head)
 
 	case 'i':
 	case 'I':
+		//case I generate stats for more than 7 day stay & travel class
 
 		while (temp != NULL)
 		{
+			//loop list & compare values for stat count
 			if (strcmp(temp->averageDuration, "More than 7 Days") == 0 && strcmp(temp->travelClass, travelClass) == 0)
 			{
 				statCounter++;
@@ -2626,12 +2616,14 @@ void getTravelClassStats(struct passengerNode* head)
 
 		}//while
 
-		perCent = ((float)statCounter / listCounter) * 100;
+		//per cent formula
+		perCent = ((float)statCounter / listLength(head)) * 100;
 
 		printf("\n%% of Passengers in Database who spent on Average more than 7 days in Ireland & in Travel class %s is %.2f %%\n", travelClass, perCent);
 
 		break;
 
+		//invalid option case
 	default:
 		printf("\nInvalid option!!! Try Again...\n");
 
@@ -2639,29 +2631,25 @@ void getTravelClassStats(struct passengerNode* head)
 
 }//GetTravelClassStats
 
+//generate stats on passengers born before 1980 function
 void get1980TravelStats(struct passengerNode* head)
 {
-	int listCounter = 0, statCounter = 0;
+	//counter
+	int statCounter = 0;
 
+	//var for per cent
 	float perCent;
 
+	//option char var
 	char option;
 
+	//temp structure
 	struct passengerNode* temp;
 
+	//assign head to temp
 	temp = head;
 
-	while(temp != NULL)
-	{
-		listCounter++;
-		temp = temp->next;
-
-	}//while
-
-	printf("\nNumber of Passengers in Database %d\n", listCounter);
-
-	temp = head;
-
+	//print menu to prompt user for stat generation
 	printf("\nPassenger Born before 1980 Statistic list");
 	printf("\nPlease Enter Character from list below to Generate Statistics");
 	printf("\nA. %% of Passengers who travel from the UK");
@@ -2675,15 +2663,16 @@ void get1980TravelStats(struct passengerNode* head)
 	printf("\nI. %% of Passengers who spent on average more than 7 days in Ireland\n");
 	printf("Enter option: ");
 	scanf(" %c", &option);
-	//option = getchar();
 
+	//switch menu option entered
 	switch (option)
 	{
 	case 'a':
 	case 'A':
-
+		//case A generate stats for UK & yob before 1980
 		while (temp != NULL)
 		{
+			//loop list & compare values for stat count
 			if (strcmp(temp->travelFrom, "UK") == 0 && temp->yob < 1980)
 			{
 				statCounter++;
@@ -2693,17 +2682,18 @@ void get1980TravelStats(struct passengerNode* head)
 
 		}//while
 
-		perCent = ((float)statCounter / listCounter) * 100;
-
+		 //per cent formula
+		perCent = ((float)statCounter / listLength(head)) * 100;
 		printf("\n%% of Passengers in Database who travel from the UK & are Born before 1980 is %.2f %%\n", perCent);
 		
 		break;
 
 	case 'b':
 	case 'B':
-
+		//case B generate stats for Rest of Europe & yob before 1980
 		while (temp != NULL)
 		{
+			//loop list & compare values for stat count
 			if (strcmp(temp->travelFrom, "Rest of Europe") == 0 && temp->yob < 1980)
 			{
 				statCounter++;
@@ -2713,17 +2703,18 @@ void get1980TravelStats(struct passengerNode* head)
 
 		}//while
 
-		perCent = ((float)statCounter / listCounter) * 100;
-
+		 //per cent formula
+		perCent = ((float)statCounter / listLength(head)) * 100;
 		printf("\n%% of Passengers in Database who travel from the Rest of Europe & are Born before 1980 is %.2f %%\n", perCent);
 
 		break;
 
 	case 'c':
 	case 'C':
-
+		//case C generate stats for Asia & yob before 1980
 		while (temp != NULL)
 		{
+			//loop list & compare values for stat count
 			if (strcmp(temp->travelFrom, "Asia") == 0 && temp->yob < 1980)
 			{
 				statCounter++;
@@ -2733,17 +2724,18 @@ void get1980TravelStats(struct passengerNode* head)
 
 		}//while
 
-		perCent = ((float)statCounter / listCounter) * 100;
-
+		 //per cent formula
+		perCent = ((float)statCounter / listLength(head)) * 100;
 		printf("\n%% of Passengers in Database who travel from Asia & are Born before 1980 is %.2f %%\n", perCent);
 
 		break;
 
 	case 'd':
 	case 'D':
-
+		//case D generate stats for Americas & yob before 1980
 		while (temp != NULL)
 		{
+			//loop list & compare values for stat count
 			if (strcmp(temp->travelFrom, "Americas") == 0 && temp->yob < 1980)
 			{
 				statCounter++;
@@ -2753,17 +2745,18 @@ void get1980TravelStats(struct passengerNode* head)
 
 		}//while
 
-		perCent = ((float)statCounter / listCounter) * 100;
-
+		 //per cent formula
+		perCent = ((float)statCounter / listLength(head)) * 100;
 		printf("\n%% of Passengers in Database who travel from the Americas & are Born before 1980 is %.2f %%\n", perCent);
 
 		break;
 
 	case 'e':
 	case 'E':
-
+		//case E generate stats for Australasia & yob before 1980
 		while (temp != NULL)
 		{
+			//loop list & compare values for stat count
 			if (strcmp(temp->travelFrom, "Australasia") == 0 && temp->yob < 1980)
 			{
 				statCounter++;
@@ -2773,17 +2766,18 @@ void get1980TravelStats(struct passengerNode* head)
 
 		}//while
 
-		perCent = ((float)statCounter / listCounter) * 100;
-
+		 //per cent formula
+		perCent = ((float)statCounter / listLength(head)) * 100;
 		printf("\n%% of Passengers in Database who travel from the Australasia & are Born before 1980 is %.2f %%\n", perCent);
 
 		break;
 
 	case 'f':
 	case 'F':
-
+		//case F generate stats for 1 day stay & yob before 1980
 		while (temp != NULL)
 		{
+			//loop list & compare values for stat count
 			if (strcmp(temp->averageDuration, "One Day") == 0 && temp->yob < 1980)
 			{
 				statCounter++;
@@ -2793,17 +2787,18 @@ void get1980TravelStats(struct passengerNode* head)
 
 		}//while
 
-		perCent = ((float)statCounter / listCounter) * 100;
-
+		 //per cent formula
+		perCent = ((float)statCounter / listLength(head)) * 100;
 		printf("\n%% of Passengers in Database who spent on Average one day in Ireland & are Born before 1980 is %.2f %%\n", perCent);
 
 		break;
 
 	case 'g':
 	case 'G':
-
+		//case G generate stats for less than 3 day stay & yob before 1980
 		while (temp != NULL)
 		{
+			//loop list & compare values for stat count
 			if (strcmp(temp->averageDuration, "Less than 3 Days") == 0 && temp->yob < 1980)
 			{
 				statCounter++;
@@ -2813,17 +2808,18 @@ void get1980TravelStats(struct passengerNode* head)
 
 		}//while
 
-		perCent = ((float)statCounter / listCounter) * 100;
-
+		 //per cent formula
+		perCent = ((float)statCounter / listLength(head)) * 100;
 		printf("\n%% of Passengers in Database who spent on Average less than 3 days in Ireland & are Born before 1980 is %.2f %%\n", perCent);
 
 		break;
 
 	case 'h':
 	case 'H':
-
+		//case H generate stats for less than 7 day stay & yob before 1980
 		while (temp != NULL)
 		{
+			//loop list & compare values for stat count
 			if (strcmp(temp->averageDuration, "Less than 7 Days") == 0 && temp->yob < 1980)
 			{
 				statCounter++;
@@ -2833,17 +2829,18 @@ void get1980TravelStats(struct passengerNode* head)
 
 		}//while
 
-		perCent = ((float)statCounter / listCounter) * 100;
-
+		 //per cent formula
+		perCent = ((float)statCounter / listLength(head)) * 100;
 		printf("\n%% of Passengers in Database who spent on Average less than 7 days in Ireland & are Born before 1980 is %.2f %%\n", perCent);
 
 		break;
 
 	case 'i':
 	case 'I':
-
+		//case I generate stats for more than 7 day stay & yob before 1980
 		while (temp != NULL)
 		{
+			//loop list & compare values for stat count
 			if (strcmp(temp->averageDuration, "More than 7 Days") == 0 && temp->yob < 1980)
 			{
 				statCounter++;
@@ -2853,12 +2850,13 @@ void get1980TravelStats(struct passengerNode* head)
 
 		}//while
 
-		perCent = ((float)statCounter / listCounter) * 100;
-
+		 //per cent formula
+		perCent = ((float)statCounter / listLength(head)) * 100;
 		printf("\n%% of Passengers in Database who spent on Average more than 7 days in Ireland & are Born before 1980 is %.2f %%\n", perCent);
 
 		break;
 
+		//invalid option entered
 	default:
 		printf("\nInvalid option!!! Try Again...\n");
 
@@ -2866,26 +2864,35 @@ void get1980TravelStats(struct passengerNode* head)
 
 }//get1980TravelStats
 
+//print passenger database to file
 void printPassengerFile(FILE** database, FILE** details, struct passengerNode* head, int size)
 {
+	//open file for formatted database
 	database = fopen("Database.txt", "w");
 
+	//open file for load file details
 	details = fopen("PassengerDetails.txt", "w");
 
+	//declare temp struct
 	struct passengerNode* temp;
 
+	//int counter var, temp int for sorting & int pointer
 	int counter = 0, tempInt, *ptr;
 
+	//allocate space in memory for ints
 	ptr = (int*)malloc(size * sizeof(int));
 
+	//assign temp to head
 	temp = head;
 
+	//check for files opened
 	if(database == NULL && details == NULL)
 	{
 		printf("\nFile could not be opened!!! Try again...\n");
 	}
 	else
 	{
+		//loop list and store passport numbers in memory
 		while(temp != NULL)
 		{
 			*(ptr + counter) = temp->passportNum;
@@ -2893,6 +2900,7 @@ void printPassengerFile(FILE** database, FILE** details, struct passengerNode* h
 			temp = temp->next;
 		}//while
 
+		//sort those numbers in memory
 		for (int i = 0; i < size; i++)
 		{
 			for (int j = i + 1; j < size; j++)
@@ -2907,17 +2915,25 @@ void printPassengerFile(FILE** database, FILE** details, struct passengerNode* h
 
 		}//for
 
+		//reassign temp to head for next loop
 		temp = head;
 
+		//reassign counter to 0
 		counter = 0;
 
+		//loop for list length
 		for(int i = 0; i < size; i++)
 		{
+			//loop through list
 			while (temp != NULL)
 			{
+				//if list passport number matches sorted memory address print to file
 				if(*(ptr + i) == temp->passportNum)
 				{
+					//increment counter
 					counter++;
+
+					//print formatted list to file
 					fprintf(database, "\nPassenger %d\n", counter);
 					fprintf(database, "\nPassenger Name: %s %s\n", temp->firstName, temp->surName);
 					fprintf(database, "\nPassport Number: %d\n", temp->passportNum);
@@ -2928,21 +2944,27 @@ void printPassengerFile(FILE** database, FILE** details, struct passengerNode* h
 					fprintf(database, "\nTrips to Ireland per year: %d - %s\n", temp->tripsToIrelandNum, temp->tripsToIreland);
 					fprintf(database, "\nPassenger Average duration of stay: %d - %s\n\n", temp->averageDurationNum, temp->averageDuration);
 
+					//print to file for load file processing
 					fprintf(details, "%d %s %s %d %s %d %d %d %d\n", temp->passportNum, temp->firstName, temp->surName, temp->yob, temp->email, temp->travelFromNum, temp->travelClassNum, temp->tripsToIrelandNum, temp->averageDurationNum);
-					//temp = temp->next;
+					
 				}//if
 
+				//move temp to next in list
 				temp = temp->next;
 
 			}//while
 
+			//reassign temp for next for loop iteration
 			temp = head;
 
 		}//for
 
+		//close both files
 		fclose(database);
 
 		fclose(details);
+
+		free(ptr);
 
 		printf("\nDatabase written to Report File!!! Check Folder...\n");
 
@@ -2950,21 +2972,29 @@ void printPassengerFile(FILE** database, FILE** details, struct passengerNode* h
 
 }//printPassengerFile
 
+//list uk passengers by birth year function 
 void listUkByBirthYear(struct passengerNode* head, int size)
 {
+	//temp structure
 	struct passengerNode* temp;
 
+	//ints pointer, counters & temp int for list processing
 	int *ptr, ukCounter = 0, tempInt, countUk = 0;
 
+	//assign temp to head
 	temp = head;
 
+	//allocate memory for ints
 	ptr = (int*)malloc(size * sizeof(int));
 
+	//loop through list and check for UK passengers
 	while(temp != NULL)
 	{
 		if(strcmp(temp->travelFrom, "UK") == 0)
 		{
+			//if uk passenger found assign yob to memory pointer space 
 			*(ptr + ukCounter) = temp->yob;
+			//increment counter for next space in memory 
 			ukCounter++;
 		}//if
 
@@ -2974,8 +3004,10 @@ void listUkByBirthYear(struct passengerNode* head, int size)
 
 	printf("\nNumber of UK Passengers %d\n", ukCounter);
 
+	//reassign temp to head
 	temp = head;
 
+	//sort birth year memory addresses
 	for(int i = 0; i < ukCounter; i++)
 	{
 		for(int j = i + 1; j < ukCounter; j++)
@@ -2990,12 +3022,16 @@ void listUkByBirthYear(struct passengerNode* head, int size)
 
 	}//for
 
+	//loop for uk counter var
 	for(int i = 0; i < ukCounter; i++)
 	{
+		//loop to end of list
 		while(temp != NULL)
 		{
+			//compare for uk passengers and birth year matches
 			if(strcmp(temp->travelFrom, "UK") == 0 && *(ptr + i) == temp->yob)
 			{
+				//print sorted uk passenger list
 				countUk++;
 				printf("\nUK Passenger %d Birth Year %d\n", countUk, *(ptr + i));
 				printf("\n=================================\n");
@@ -3013,13 +3049,14 @@ void listUkByBirthYear(struct passengerNode* head, int size)
 
 		}//while
 
+		//reassign temp to head for next for loop iteration
 		temp = head;
 
 	}//for
 
+	//free memory for ptr
 	free(ptr);
 
-	
 }//listUkByBirthYear
 
 
